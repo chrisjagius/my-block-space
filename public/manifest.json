@@ -1,15 +1,14 @@
+
+
 {
-  "short_name": "React App",
   "name": "My Block Space",
+  "start_url": "https://goofy-wiles-965268.netlify.com",
+  "description": "A simple social app build on blockstack",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "https://goofy-wiles-965268.netlify.com/logo.png",
+      "sizes": "400x400",
+      "type": "image/png"
     }
-  ],
-  "start_url": "https://goofy-wiles-965268.netlify.com/",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  ]
 }
