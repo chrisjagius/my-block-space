@@ -23,6 +23,9 @@ module.exports = {
       //   ca: fs.readFileSync(process.env.REACT_HTTPS_CA, 'utf8'),
       //   passphrase: process.env.REACT_HTTPS_PASS
       // };
+      config.historyApiFallback = {
+        disableDotRule: true
+      },
 			config.headers = {
 				"Access-Control-Allow-Origin": "*",
 				"Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
