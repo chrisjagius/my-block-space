@@ -51,15 +51,23 @@ export default class App extends Component {
     })
   }
 
-  handleSignIn = (event) => {
-    event.preventDefault();
-    const origin = window.location.origin;
-    redirectToSignIn(origin, origin + "/manifesto.json", ['store_write', 'publish_data'])
+  handleSignIn = (e) => {
+    e.preventDefault();
+    const origin = window.location.origin
+    redirectToSignIn(origin, origin + '/manifest.json', ['store_write', 'publish_data'])
   }
 
-  handleSignOut = (event) => {
-    event.preventDefault();
-    signUserOut(window.location.href)
+  handleSignOut= (e) => {
+    e.preventDefault();
+    signUserOut(window.location.origin);
+  }
+
+  componentWillMount() {
+    if (isSignInPending()) {
+      handlePendingSignIn().then((userData) => {
+        window.location = window.location.origin;
+      });
+    }
   }
 
   render() {
