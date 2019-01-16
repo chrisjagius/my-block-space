@@ -46,7 +46,7 @@ module.exports = {
 			config.headers = {
 				"Access-Control-Allow-Origin": "*",
 				"Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
-				"Access-Control-Allow-Headers": "Content-Type"
+        "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
 			}
 
       return config;
