@@ -13,7 +13,8 @@ module.exports = {
         path.resolve(paths.appNodeModules, 'base64url'),
         path.resolve(paths.appNodeModules, 'typeforce'),
         path.resolve(paths.appNodeModules, 'key-encoder'),
-        path.resolve(paths.appNodeModules, 'base-x')
+        path.resolve(paths.appNodeModules, 'base-x'),
+        path.resolve(paths.appNodeModules, 'uri-js')
       ];
     }
     return config;
