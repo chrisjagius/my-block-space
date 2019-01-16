@@ -1,11 +1,5 @@
 # Blockstack Create React App
 
-A basic starter kit for building Blockstack apps using [Create React App](https://github.com/facebookincubator/create-react-app)
-
-![iso6sffqlx](https://user-images.githubusercontent.com/119117/33392657-50ee023a-d502-11e7-8f2a-6857b146e0fd.gif)
-
----
-
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
