@@ -124,11 +124,13 @@ export default class Profile extends Component {
     // }
 
     // componentDidMount() {
-    //     this.fetchData()
+    //      this.fetchData()
     // }
+    logUserInfo = () => {
+        console.log(this.props.person);
+    }
 
     render() {
-        // const { handleSignOut } = this.props;
         // const { person } = this.state;
         // const { username } = this.state;
 
@@ -190,7 +192,9 @@ export default class Profile extends Component {
             //             </div>
             //         </div>
             //     </div> : null
-            <div><h1>Hello Chance!</h1></div>
+            <div>Kus
+            <button onClick={this.logUserInfo} >Click!</button>
+            </div>
         );
     }
     // componentWillMount() {

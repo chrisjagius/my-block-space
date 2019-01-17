@@ -81,7 +81,9 @@ export default class App extends Component {
             <Route
               path='/:username?'
               render={
-                props => <Profile handleSignOut={this.handleSignOut} {...props} />
+                props => <Profile handleSignOut={this.handleSignOut} 
+                person={this.state.person}
+                {...props} />
               }
             />
           </Switch></div>)
