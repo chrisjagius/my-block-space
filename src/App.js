@@ -54,6 +54,7 @@ export default class App extends Component {
   handleSignIn = (e) => {
     e.preventDefault();
     const origin = window.location.origin
+    console.log(origin)
     redirectToSignIn(origin, origin + '/manifest.json', ['store_write', 'publish_data'])
   }
 

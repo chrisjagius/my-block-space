@@ -2,7 +2,7 @@
 
 {
   "name": "My Block Space",
-  "start_url": "goofy-wiles-965268.netlify.com",
+  "start_url": "/",
   "description": "A simple social app build on blockstack",
   "icons": [
     {
