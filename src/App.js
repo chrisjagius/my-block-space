@@ -37,7 +37,7 @@ export default class App extends Component {
       return true;
     } else if (isSignInPending()) {
       handlePendingSignIn().then(function (userData) {
-        window.location = window.location.origin
+        this.props.history.push('/')
       })
       return false;
     }
