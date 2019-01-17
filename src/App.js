@@ -45,10 +45,11 @@ export default class App extends Component {
 
   loadPerson = () => {
     let username = loadUserData().username
-
+    let userId = username.slice(0, -11);
     lookupProfile(username).then((person) => {
       this.setState({ person })
     })
+    this.props.history.push(`/${userId}`)
   }
 
   handleSignIn = (e) => {
@@ -58,10 +59,6 @@ export default class App extends Component {
     redirectToSignIn(origin, origin + '/manifest.json', ['store_write', 'publish_data'])
   }
 
-  handleSignOut= (e) => {
-    e.preventDefault();
-    signUserOut(window.location.origin);
-  }
 
   componentWillMount() {
     if (isSignInPending()) {
@@ -82,7 +79,7 @@ export default class App extends Component {
             <Route
               path='/:username?'
               render={
-                props => <Profile handleSignOut={this.handleSignOut} 
+                props => <Profile  
                 person={this.state.person}
                 {...props} />
               }
