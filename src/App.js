@@ -1,15 +1,16 @@
-import React, { Component, Link } from 'react';
-import Profile from './components/Profile.jsx';
+import React, { Component } from 'react';
+import MyProfile from './components/MyProfile.jsx';
 import Signin from './components/Signin.jsx';
 import Navbar from './components/Navbar.jsx';
+import Profile from './components/Profile';
 import {
   isSignInPending,
   isUserSignedIn,
   redirectToSignIn,
   handlePendingSignIn,
-  signUserOut,
   loadUserData,
-  lookupProfile
+  lookupProfile,
+  Person
 } from 'blockstack';
 import { Switch, Route } from 'react-router-dom'
 import './App.css';
@@ -24,7 +25,8 @@ export default class App extends Component {
 
     this.state = {
       isSignedIn,
-      person: undefined
+      person: undefined,
+      username: undefined
     }
 
     if (isSignedIn) {
@@ -43,13 +45,14 @@ export default class App extends Component {
     }
   }
 
-  loadPerson = () => {
-    let username = loadUserData().username
-    let userId = username.slice(0, -11);
-    lookupProfile(username).then((person) => {
-      this.setState({ person })
-    })
-    this.props.history.push(`/${userId}`)
+  loadPerson = async () => {
+    let userData = loadUserData()
+    let person = await new Person(userData.profile)
+    console.log(person)
+    let username = await userData.username
+    let urlusername = username.slice(0, -11);
+    this.setState({ person, username })
+    this.props.history.push(`/${urlusername}`)
   }
 
   handleSignIn = (e) => {
@@ -59,10 +62,14 @@ export default class App extends Component {
     redirectToSignIn(origin, origin + '/manifest.json', ['store_write', 'publish_data'])
   }
 
+  searchFor = (name) => {
+    this.props.history.push(`/users/${name}`)
+  }
 
   componentWillMount() {
     if (isSignInPending()) {
       handlePendingSignIn().then((userData) => {
+        // not sure what to do with user data
         window.location = window.location.origin;
       });
     }
@@ -74,16 +81,29 @@ export default class App extends Component {
         {!this.state.isSignedIn ?
           <Signin handleSignIn={this.handleSignIn} />
           :
-          (<div><Navbar />
+          (<div><Navbar
+            searchFor={this.searchFor}
+           />
           <Switch>
             <Route
-              path='/:username?'
+              path='/users/:username'
               render={
-                props => <Profile  
+                props => <Profile
+                  person={this.state.person}
+                  username={this.state.username}
+                  {...props} />
+              }
+            />
+            <Route
+              path='/:username'
+              render={
+                props => <MyProfile  
                 person={this.state.person}
+                username={this.state.username}
                 {...props} />
               }
             />
+            
           </Switch></div>)
         }
       </div>
