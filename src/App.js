@@ -15,6 +15,8 @@ import {
 import { Switch, Route } from 'react-router-dom'
 import './App.css';
 
+const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
+
 
 export default class App extends Component {
 
@@ -25,8 +27,18 @@ export default class App extends Component {
 
     this.state = {
       isSignedIn,
-      person: undefined,
-      username: undefined
+      person: {
+        name() {
+          return 'Anonymous';
+        },
+        avatarUrl() {
+          return avatarFallbackImage;
+        },
+        description() {
+          return 'No description'
+        }
+      },
+      username: null
     }
 
     if (isSignedIn) {
@@ -46,13 +58,14 @@ export default class App extends Component {
   }
 
   loadPerson = async () => {
+    console.log('LOAD PERSON STARTS')
     let userData = loadUserData()
     let person = await new Person(userData.profile)
     console.log(person)
     let username = await userData.username
-    let urlusername = username.slice(0, -11);
+    // let urlusername = username.slice(0, -11);
     this.setState({ person, username })
-    this.props.history.push(`/${urlusername}`)
+    this.props.history.push(`/${username}`)
   }
 
   handleSignIn = (e) => {
@@ -75,6 +88,10 @@ export default class App extends Component {
     }
   }
 
+  componentDidMount() {
+    this.loadPerson()
+  }
+
   render() {
     return (
       <div className="App">
@@ -83,6 +100,8 @@ export default class App extends Component {
           :
           (<div><Navbar
             searchFor={this.searchFor}
+            person={this.state.person}
+            username={this.state.username}
            />
           <Switch>
             <Route

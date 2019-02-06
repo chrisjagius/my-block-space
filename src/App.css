@@ -67,6 +67,14 @@
   z-index: 2;
 }
 
+/* navbar */
+.nav-img {
+  height: 2em;
+  width: 2em;
+  margin-top: 0.1em;
+  border-radius: 50%
+}
+
 
 /* brown #925C52
 brown/dark #582921
@@ -77,29 +85,159 @@ blue/grey #394954 */
 /* my profile page */
 .container-myprofile {
   background-color: #394954;
-  margin-top: -1.4em;
-}
-.myprofile-bio {
-  padding-top: 2em;
-  padding-bottom: 1em;
+  margin-top: 2em;
+  overflow: hidden;
 }
 
+.container-desc-prof {
+  padding-top: 2em;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  height: 50vh;
+  position: relative;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
+}
+.myprofile-bio {
+  position: absolute;
+  padding-top: 10em;
+  margin-bottom: -2em;
+  height: 33vh;
+  z-index: 2;
+  width: auto;
+  left: 0;
+  right: 0;
+}
 .bio-left {
   align-content: center;
 }
 .bio-left > img {
-  max-width: 10em;
-  max-height: 10em;
-  border-radius: 10px;
+  width: 120px;
+  height: 120px;
+  border: solid 0.7px #f9f9f998;
+  border-radius: 50%;
 }
 
 .bio-right {
-  align-content: center;
+  text-align: left;
   color: #f3f3f3ff;
 }
 
 .myprofile-options {
-  background-color: #080808a8;
+  background-color: #f9f9f9;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  width: auto;
+  min-height: 16vh;
+  z-index: 1;
+  padding-top: 1em;
+}
+.my-options {
+  text-align: left;
+}
+hr {
+  color: black;
+  width: 100%;
+}
+
+.new-status {
+  background-color: #f9f9f9;
+  margin-bottom: 1em;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
+}
+.my-post {
+  height: auto;
+  background-color: #f9f9f9;
+  margin-bottom: 1em;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.profile-posts {
+  min-height: 80vh;
+  background-color: #f9f9f9;
+  padding-top: 1em;
+}
+.post-img {
+  border-radius: 50%;
+  width: 3em;
+  height: 3em;
+  margin-top: 1em;
+}
+.poster-info {
+  margin-top: 1.5em;
+}
+.post-date {
+  margin-top: 2em;
+  font-size: 15px;
+}
+.post-pic-container {
+  position: relative;
+  width: 100%;
+}
+.post-pic {
+  max-width: 100%;
+  max-height: 100%;
+}
+.delete-img {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.input-status {
+  height: 15em;
+  overflow: scroll;
+  background: #ffffff;
+  resize: none;
+  border: 0 none;
+}
+.bio-icons {
+  width: 2em;
+  height: 2em;
+}
+.bio-icons:hover {
+  background-color: #dadadaca;
+  border-radius: 50%;
+}
+/* no result  */
+.no-res-container {
+  height: 100vh;
+  text-align: center;
+}
+.no-res-container > p {
+  padding-top: 20%;
+}
+
+
+@media only screen and (max-width: 770px) {
+  .myprofile-bio {
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: f9f9f9;
+  }
+  .bio-left {
+    align-content: center;
+  }
+  .bio-left > img {
+    width: 120px;
+    height: 120px;
+    border: solid 0.7px #f9f9f981;
+    border-radius: 50%; 
+  }
+
+  .bio-right {
+    text-align: center;
+    color: #f3f3f3ff;
+  }
+  hr {
+    width: 80%;
+  }
 }
 @keyframes App-logo-spin {
   from {
