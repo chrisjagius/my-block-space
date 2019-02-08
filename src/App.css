@@ -209,6 +209,11 @@ hr {
 .bio-icons:hover {
   background-color: #dadadaca;
   border-radius: 50%;
+  cursor: pointer;
+}
+.my-friend:hover {
+  background-color: #aaaaaaca;
+  cursor: pointer;
 }
 /* profile page  */
 .add-button {

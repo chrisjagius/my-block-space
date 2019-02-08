@@ -8,10 +8,11 @@ import {
     putFile,
 
 } from 'blockstack';
-import { Container, Row, Col, Button, Form, InputGroup, FormControl } from 'react-bootstrap';
+import { Container, Row, Col, ListGroup, Button, Form, InputGroup, FormControl } from 'react-bootstrap';
 import backPic from '../assets/standard-wallpaper.jpg';
 import settingsIcon from '../assets/settings.svg';
 import cameraIcon from '../assets/camera.svg';
+import usersIcon from '../assets/users.svg';
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
 export default class MyProfile extends Component {
@@ -27,7 +28,8 @@ export default class MyProfile extends Component {
             newImage: false,
             settings: {
                 backgroundImage: false
-            }
+            },
+            displayFriends: false
         };
         this.handleNewStatusChange = this.handleNewStatusChange.bind(this);
         this.handleNewStatusSubmit = this.handleNewStatusSubmit.bind(this);
@@ -149,6 +151,9 @@ export default class MyProfile extends Component {
             })
         })
     }
+    displayFriends = () => {
+        this.setState({displayFriends: !this.state.displayFriends})
+    }
 
     parseDate = (time) => {
         let now = Date.now();
@@ -166,8 +171,23 @@ export default class MyProfile extends Component {
         const backgroundStyle = {
             'backgroundImage': `url("${this.state.settings.backgroundImage ? this.state.settings.backgroundImage : backPic}"`
         }
+        const friendDisplay = this.props.friends.length > 0 ? (<div className='profile-posts'>
+            <div className="my-post"><h1>Friends</h1>
+            <ListGroup variant="flush">
+            {this.props.friends.map((friend) => (
+                <div className="my-friend" key={friend}>
+                    <Row>
+                        <Col xs={12}>
+                            <ListGroup.Item onClick={() => { this.props.searchFor(friend) }}>{friend}</ListGroup.Item>
+                        </Col>
+                    </Row>
+                </div>
+            )
+                    )}</ListGroup></div>
+        </div>) : (<div className='no-res-container'>You don't have any friends yet.</div>);
         return (
-            !isSignInPending() && person ?
+            <div>
+            {!isSignInPending() && person &&
                 <div className="container-myprofile">
                     <div style={backgroundStyle} className='container-desc-prof'>
                     <Container>
@@ -193,10 +213,15 @@ export default class MyProfile extends Component {
                                 <Col xs={3}>
 
                                 </Col>
-                                <Col xs={9}>
+                                <Col xs={1}>
                                     <img src={settingsIcon} 
                                     onClick={this.toggleSettings}
                                     className='bio-icons'/>
+                                </Col>
+                                <Col xs={8}>
+                                    <img src={usersIcon}
+                                        onClick={this.displayFriends}
+                                        className='bio-icons' />
                                 </Col>
                             </Row>
                             <Row>
@@ -216,7 +241,9 @@ export default class MyProfile extends Component {
                     </div>
                     
                     </div>
-                    <div className='profile-posts'>
+
+                    {this.state.displayFriends && friendDisplay}
+                    {!this.state.displayFriends && <div className='profile-posts'>
                         <Row>
                         <Col xs={1} md={2}></Col>
                         <Col xs={10} md={8}>
@@ -335,8 +362,10 @@ export default class MyProfile extends Component {
                         </Col>
                         <Col xs={1} md={2}></Col>
                         </Row>
-                    </div>
-                    </div> : null
+                    </div>}
+                </div>}
+            </div>
+
         );
     }
 }

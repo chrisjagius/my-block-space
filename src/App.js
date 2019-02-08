@@ -131,7 +131,9 @@ export default class App extends Component {
             <Route
               path='/:username'
               render={
-                props => <MyProfile  
+                props => <MyProfile 
+                searchFor={this.searchFor}
+                friends={this.state.friends} 
                 person={this.state.person}
                 username={this.state.username}
                 {...props} />
