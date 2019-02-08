@@ -322,12 +322,12 @@ export default class MyProfile extends Component {
                                 </Row>
                                 
                                 <Row>
-                                <Col md={6} className='input-btn-wrapper"'>
+                                <Col md={6} className='input-btn-wrapper'>
                                     <label className="btn btn-outline-secondary">
                                         <img alt='' src={cameraIcon} /> <input type="file" onChange={this.captureFile} hidden/>
                                     </label>
                                 </Col>
-                                <Col md={4} className="text-right">
+                                            <Col md={4} className="text-right input-btn-wrapper">
                                             <Button variant="outline-success"
                                         className=""
                                         onClick={e => this.handleNewStatusSubmit(e)}
@@ -347,7 +347,7 @@ export default class MyProfile extends Component {
                                 {this.state.isLoading && <span>Loading...</span>}
                                 {this.state.statuses.map((status) => (
                                     <div className="my-post" key={status.id}>
-                                        <Row>
+                                        <Row className='poster-info'>
                                             <Col xs={2}>
                                                 <img
                                                     src={person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage}

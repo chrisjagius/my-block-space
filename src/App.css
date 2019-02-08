@@ -162,6 +162,10 @@ hr {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
   position: relative;
 }
+.my-post > hr {
+  margin: 0;
+  padding: 0;
+}
 
 .profile-posts {
   min-height: 80vh;
@@ -184,6 +188,14 @@ hr {
 .post-pic-container {
   position: relative;
   width: 100%;
+  margin-top: 0;
+}
+.post-pic-container > hr {
+  margin: 0;
+  padding: 0;
+}
+.poster-info {
+  margin-bottom: 0.5em;
 }
 .post-pic {
   max-width: 100%;
@@ -201,6 +213,9 @@ hr {
   background: #ffffff;
   resize: none;
   border: 0 none;
+}
+.input-btn-wrapper {
+  margin-top: 0.5em;
 }
 .bio-icons {
   width: 2em;
