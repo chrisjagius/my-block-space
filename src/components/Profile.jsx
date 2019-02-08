@@ -34,9 +34,10 @@ export default class Profile extends Component {
     }
 
     fetchData() {
-        this.setState({ isLoading: true })
         const username = this.props.match.params.username
-        this.setState({ username })
+        this.setState({ isLoading: true, username: username })
+        
+        this.setState({  })
         lookupProfile(username)
             .then((profile) => {
                 this.setState({
@@ -62,10 +63,8 @@ export default class Profile extends Component {
             .finally(() => {
                 this.setState({ isLoading: false })
             })
-
         this.props.friends.map(x => {
-            console.log(x, 'and', this.state.username)
-            if (x === this.state.username) {
+            if (x === username) {
                 this.setState({following: true})
                 
             }
