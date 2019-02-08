@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Navbar, Nav, InputGroup, FormControl, Button } from 'react-bootstrap';
 import {signUserOut} from 'blockstack';
 import { Link } from 'react-router-dom';
+const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
+
 
 
 class Navigationbar extends Component {
@@ -70,7 +72,7 @@ class Navigationbar extends Component {
                             </Nav.Link>
                             <Link to={`/${username ? username : null}`}>
                             <img
-                                src={person.avatarUrl()}
+                                    src={person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage}
                                 alt=''
                                 className="nav-img"
                             />
