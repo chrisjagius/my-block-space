@@ -23,8 +23,8 @@ export default class Profile extends Component {
             checked: false,
             statuses: [],
             statusIndex: 0,
-            isLoading: false,
-            following: false
+            isLoading: true,
+            following: false,
         };
         this.fetchData = this.fetchData.bind(this);
     }
@@ -118,15 +118,20 @@ export default class Profile extends Component {
     
 
     render() {
-        const { person, username } = this.state;
+        const { person, username, isLoading } = this.state;
         const backgroundStyle = {
             'backgroundImage': `url("${backPic}"`
         }
+        const loader = <div className="container-myprofile"><div className='loader'></div></div>;
         if (this.props.match.params.username !== username) {
             this.fetchData();
         }
         
-        return (!isSignInPending() && person ?
+        return (
+
+            <div>
+            {isLoading && loader}
+            {!isLoading && person ?
                     <div className="container-myprofile">
                         <div style={backgroundStyle} className='container-desc-prof'>
                             <Container>
@@ -225,8 +230,8 @@ export default class Profile extends Component {
                                 <Col xs={1} md={2}></Col>
                             </Row>
                         </div>
-                    </div> : <NoResult username={username}/>
-            
+                    </div> : <NoResult username={username}/>}
+            </div>
         );
     }
 }
