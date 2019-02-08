@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import {
     isSignInPending,
     loadUserData,
-    Person,
     getFile,
-    lookupProfile,
     putFile,
 
 } from 'blockstack';
@@ -184,7 +182,18 @@ export default class MyProfile extends Component {
                 </div>
             )
                     )}</ListGroup></div>
-        </div>) : (<div className='no-res-container'>You don't have any friends yet.</div>);
+        </div>) : (
+                <div className='profile-posts'>
+                    <div className="my-post"><h1>Friends</h1>
+                        <ListGroup variant="flush">
+                            <Row>
+                                <Col xs={12}>
+                                <ListGroup.Item>You don't have any friends yet.</ListGroup.Item>
+                                </Col>
+                            </Row>
+                        </ListGroup>
+                    </div>
+                </div>);
         return (
             <div>
             {!isSignInPending() && person &&
@@ -197,6 +206,7 @@ export default class MyProfile extends Component {
                                 <img
                                     src={person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage}
                                     className="img-rounded avatar"
+                                    alt=''
                                     id="avatar-image"
                                 />
                             </Col>
@@ -216,11 +226,13 @@ export default class MyProfile extends Component {
                                 <Col xs={1}>
                                     <img src={settingsIcon} 
                                     onClick={this.toggleSettings}
+                                    alt=''
                                     className='bio-icons'/>
                                 </Col>
                                 <Col xs={8}>
                                     <img src={usersIcon}
                                         onClick={this.displayFriends}
+                                        alt=''
                                         className='bio-icons' />
                                 </Col>
                             </Row>
@@ -294,7 +306,7 @@ export default class MyProfile extends Component {
                                                 this.state.newImage &&
                                                 <div className='post-pic-container'>
                                                     <Button onClick={this.deleteImage} variant="outline-danger" className='delete-img'>X</Button>
-                                                    <img className='post-pic' src={this.state.newImage} />
+                                                    <img alt='' className='post-pic' als='' src={this.state.newImage} />
                                                 </div>}
                                             <InputGroup>
                                                 <FormControl
@@ -310,8 +322,8 @@ export default class MyProfile extends Component {
                                 
                                 <Row>
                                 <Col md={6} className='input-btn-wrapper"'>
-                                    <label class="btn btn-outline-secondary">
-                                        <img src={cameraIcon} /> <input type="file" onChange={this.captureFile} hidden/>
+                                    <label className="btn btn-outline-secondary">
+                                        <img alt='' src={cameraIcon} /> <input type="file" onChange={this.captureFile} hidden/>
                                     </label>
                                 </Col>
                                 <Col md={4} className="text-right">
@@ -338,6 +350,7 @@ export default class MyProfile extends Component {
                                             <Col xs={2}>
                                                 <img
                                                     src={person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage}
+                                                    alt=''
                                                     className="post-img"
                                                 />
                                             </Col>
@@ -353,7 +366,7 @@ export default class MyProfile extends Component {
                                         {
                                             status.image &&
                                             <div className='post-pic-container'>
-                                            <img className='post-pic' src={status.image} />
+                                            <img alt='' className='post-pic' src={status.image} />
                                             <hr /></div>}
                                         <pre>{status.text}</pre>
                                     </div>

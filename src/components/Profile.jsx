@@ -4,13 +4,11 @@ import {
     Person,
     getFile,
     lookupProfile,
-    isSignInPending,
     putFile
 } from 'blockstack';
-import { Container, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import backPic from '../assets/standard-wallpaper.jpg';
 import NoResult from './NoResult';
-import addIcon from '../assets/add.svg';
 
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
@@ -64,9 +62,7 @@ export default class Profile extends Component {
                 this.setState({ isLoading: false })
             })
         this.props.friends.map(x => {
-            if (x === username) {
-                this.setState({following: true})
-            }
+            return x === username ? this.setState({ following: true }) : this.setState({ following: false });
         })
     }
     addFriend = (event) => {
@@ -138,7 +134,7 @@ export default class Profile extends Component {
                                 <Row className="myprofile-bio">
 
                                     <Col xs={12} md={3} className='bio-left'>
-                                        <img
+                                        <img alt=''
                                             src={person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage}
                                             className="img-rounded avatar"
                                             id="avatar-image"
@@ -203,7 +199,7 @@ export default class Profile extends Component {
                                         <div className="my-post" key={status.id}>
                                             <Row>
                                                 <Col xs={2}>
-                                                    <img
+                                                    <img alt=''
                                                         src={person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage}
                                                         className="post-img"
                                                     />
@@ -220,7 +216,7 @@ export default class Profile extends Component {
                                             {
                                                 status.image &&
                                                 <div className='post-pic-container'>
-                                                    <img className='post-pic' src={status.image} />
+                                                    <img alt='' className='post-pic' src={status.image} />
                                                     <hr /></div>}
                                             <pre>{status.text}</pre>
                                         </div>

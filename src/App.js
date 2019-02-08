@@ -9,7 +9,6 @@ import {
   redirectToSignIn,
   handlePendingSignIn,
   loadUserData,
-  lookupProfile,
   getFile,
   Person
 } from 'blockstack';
@@ -63,7 +62,6 @@ export default class App extends Component {
     let userData = loadUserData()
     let person = await new Person(userData.profile)
     this.loadFriends();
-    console.log(person)
     let username = await userData.username
     // let urlusername = username.slice(0, -11);
     this.setState({ person, username })
@@ -78,14 +76,12 @@ export default class App extends Component {
         this.setState({
           friends: friends
         })
-        console.log(friends)
       })
   }
 
   handleSignIn = (e) => {
     e.preventDefault();
     const origin = window.location.origin
-    console.log(origin)
     redirectToSignIn(origin, origin + '/manifest.json', ['store_write', 'publish_data'])
   }
 

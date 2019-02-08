@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Navbar, Nav, NavItem, Form, InputGroup, FormControl, Button } from 'react-bootstrap';
+import { Navbar, Nav, InputGroup, FormControl, Button } from 'react-bootstrap';
 import {signUserOut} from 'blockstack';
 import { Link } from 'react-router-dom';
 
@@ -34,11 +34,7 @@ class Navigationbar extends Component {
 
 
     render() {
-        const formStyle = {
-            'borderRadius': '30px',
-            'border': 'solid 1px #f3f3f3ff',
-            'height': '1.5em'
-        }
+        
         const { person, username } = this.props;
         
         return (
@@ -75,6 +71,7 @@ class Navigationbar extends Component {
                             <Link to={`/${username ? username : null}`}>
                             <img
                                 src={person.avatarUrl()}
+                                alt=''
                                 className="nav-img"
                             />
                             </Link>
