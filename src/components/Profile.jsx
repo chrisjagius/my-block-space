@@ -66,7 +66,6 @@ export default class Profile extends Component {
         this.props.friends.map(x => {
             if (x === username) {
                 this.setState({following: true})
-                
             }
         })
     }
@@ -78,7 +77,20 @@ export default class Profile extends Component {
         putFile('friends.json', JSON.stringify(friends), options)
             .then((result) => {
                 console.log('res ,', result)
+                this.setState({ following: true })
             })
+    }
+    unFriend = (event) => {
+        event.preventDefault();
+        let friends = this.props.friends
+        let user = this.state.username
+        const filtered = friends.filter(username => username !== user)
+        const options = { encrypt: false }
+        putFile('friends.json', JSON.stringify(filtered), options)
+        .then((result) => {
+            console.log('res ,', result)
+            this.setState({ following: false })
+        })
     }
 
     componentDidMount() {
@@ -143,11 +155,16 @@ export default class Profile extends Component {
                                         <p className='text-secondary'>Posts: {this.state.statuses.length}</p>
                                     </Col>
                                     <Col xs={2}>
-                                        {!this.state.following && <Button variant="outline-success"
+                                        {!this.state.following ? <Button variant="outline-success"
                                             className=""
                                             onClick={this.addFriend}
                                         >
                                         Follow
+                                        </Button> : <Button variant="outline-danger"
+                                        className=""
+                                        onClick={this.unFriend}
+                                    >
+                                        Unfollow
                                         </Button>}
                                     </Col>
                                     <Col xs={5}>
