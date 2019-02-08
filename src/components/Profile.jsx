@@ -4,11 +4,13 @@ import {
     Person,
     getFile,
     lookupProfile,
-    isSignInPending
+    isSignInPending,
+    putFile
 } from 'blockstack';
 import { Container, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
 import backPic from '../assets/standard-wallpaper.jpg';
 import NoResult from './NoResult';
+import addIcon from '../assets/add.svg';
 
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
@@ -19,10 +21,10 @@ export default class Profile extends Component {
             person: undefined,
             username: "",
             checked: false,
-            newStatus: "",
             statuses: [],
             statusIndex: 0,
-            isLoading: false
+            isLoading: false,
+            following: false
         };
         this.fetchData = this.fetchData.bind(this);
     }
@@ -33,7 +35,6 @@ export default class Profile extends Component {
 
     fetchData() {
         this.setState({ isLoading: true })
-        console.log(this.props.match.params.username)
         const username = this.props.match.params.username
         this.setState({ username })
         lookupProfile(username)
@@ -50,19 +51,34 @@ export default class Profile extends Component {
         getFile('statuses.json', options)
             .then((file) => {
                 var statuses = JSON.parse(file || '[]')
-
-                console.log(statuses)
                 this.setState({
                     statusIndex: statuses.length,
                     statuses: statuses
                 })
             })
             .catch((error) => {
-                console.log('could not fetch statuses', this.props.match.params.username, this.state.username)
                 this.setState({ person: undefined })
             })
             .finally(() => {
                 this.setState({ isLoading: false })
+            })
+
+        this.props.friends.map(x => {
+            console.log(x, 'and', this.state.username)
+            if (x === this.state.username) {
+                this.setState({following: true})
+                
+            }
+        })
+    }
+    addFriend = (event) => {
+        event.preventDefault();
+        let friends = this.props.friends
+        friends.unshift(this.state.username)
+        const options = { encrypt: false }
+        putFile('friends.json', JSON.stringify(friends), options)
+            .then((result) => {
+                console.log('res ,', result)
             })
     }
 
@@ -74,7 +90,7 @@ export default class Profile extends Component {
         this.fetchData()
     }
     logUserInfo = () => {
-        // console.log(loadUserData());
+        console.log(loadUserData());
     }
 
     parseDate = (time) => {
@@ -124,8 +140,19 @@ export default class Profile extends Component {
                                     <Col xs={3}>
 
                                     </Col>
-                                    <Col xs={9}>
-                                        <p className='text-secondary'>Posts: 0</p>
+                                    <Col xs={2}>
+                                        <p className='text-secondary'>Posts: {this.state.statuses.length}</p>
+                                    </Col>
+                                    <Col xs={2}>
+                                        {!this.state.following && <Button variant="outline-success"
+                                            className=""
+                                            onClick={this.addFriend}
+                                        >
+                                        Follow
+                                        </Button>}
+                                    </Col>
+                                    <Col xs={5}>
+
                                     </Col>
                                 </Row>
                                 <Row>
@@ -169,11 +196,10 @@ export default class Profile extends Component {
                                             </Row>
                                             <hr />
                                             {
-                                            status.image &&
-                                            <div className='post-pic-container'>
-                                                
-                                            
-                                            <hr /></div>}
+                                                status.image &&
+                                                <div className='post-pic-container'>
+                                                    <img className='post-pic' src={status.image} />
+                                                    <hr /></div>}
                                             <pre>{status.text}</pre>
                                         </div>
                                     )

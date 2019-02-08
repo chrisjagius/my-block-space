@@ -97,7 +97,12 @@ blue/grey #394954 */
   background-attachment: fixed;
   height: 50vh;
   position: relative;
+  overflow: hidden;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
+}
+.settings {
+  text-align: left;
+  padding: 1em;
 }
 .myprofile-bio {
   position: absolute;
@@ -205,6 +210,16 @@ hr {
   background-color: #dadadaca;
   border-radius: 50%;
 }
+/* profile page  */
+.add-button {
+  text-align: center;
+  color: #868e96;
+}
+.add-button:hover {
+  background-color: #dadadaca;
+  border-radius: 10px;
+}
+
 /* no result  */
 .no-res-container {
   height: 100vh;

@@ -10,6 +10,7 @@ import {
   handlePendingSignIn,
   loadUserData,
   lookupProfile,
+  getFile,
   Person
 } from 'blockstack';
 import { Switch, Route } from 'react-router-dom'
@@ -38,7 +39,8 @@ export default class App extends Component {
           return 'No description'
         }
       },
-      username: null
+      username: null,
+      friends: []
     }
 
     if (isSignedIn) {
@@ -58,14 +60,26 @@ export default class App extends Component {
   }
 
   loadPerson = async () => {
-    console.log('LOAD PERSON STARTS')
     let userData = loadUserData()
     let person = await new Person(userData.profile)
+    this.loadFriends();
     console.log(person)
     let username = await userData.username
     // let urlusername = username.slice(0, -11);
     this.setState({ person, username })
     this.props.history.push(`/${username}`)
+  }
+
+  loadFriends = () => {
+    const options = { decrypt: false }
+    getFile('friends.json', options)
+      .then((file) => {
+        let friends = JSON.parse(file || '[]')
+        this.setState({
+          friends: friends
+        })
+        console.log(friends)
+      })
   }
 
   handleSignIn = (e) => {
@@ -89,7 +103,7 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    this.loadPerson()
+    // this.loadPerson()
   }
 
   render() {
@@ -108,6 +122,7 @@ export default class App extends Component {
               path='/users/:username'
               render={
                 props => <Profile
+                  friends={this.state.friends}
                   person={this.state.person}
                   username={this.state.username}
                   {...props} />

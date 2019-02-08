@@ -8,7 +8,7 @@ import {
     putFile,
 
 } from 'blockstack';
-import { Container, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
+import { Container, Row, Col, Button, Form, InputGroup, FormControl } from 'react-bootstrap';
 import backPic from '../assets/standard-wallpaper.jpg';
 import settingsIcon from '../assets/settings.svg';
 import cameraIcon from '../assets/camera.svg';
@@ -22,7 +22,12 @@ export default class MyProfile extends Component {
             newStatus: "",
             statuses: [],
             statusIndex: 0,
-            isLoading: false
+            isLoading: false,
+            changeInfo: false,
+            newImage: false,
+            settings: {
+                backgroundImage: false
+            }
         };
         this.handleNewStatusChange = this.handleNewStatusChange.bind(this);
         this.handleNewStatusSubmit = this.handleNewStatusSubmit.bind(this);
@@ -36,22 +41,26 @@ export default class MyProfile extends Component {
 
     fetchData() {
         this.setState({ isLoading: true })
-        console.log('ik start')
         const options = { decrypt: false }
         getFile('statuses.json', options)
-            .then((file) => {
-                console.log('in the then')
-                var statuses = JSON.parse(file || '[]')
-                this.setState({
-                    statusIndex: statuses.length,
-                    statuses: statuses,
-                    newImage: false,
-                    newImage: false
-                })
+        .then((file) => {
+            let statuses = JSON.parse(file || '[]')
+            this.setState({
+                statusIndex: statuses.length,
+                statuses: statuses
             })
-            .finally(() => {
-                this.setState({ isLoading: false })
+        })
+
+        getFile('settings.json', options)
+        .then((file) => {
+            let settings = JSON.parse(file || false)
+            this.setState({
+                settings: settings ? settings : this.state.settings
             })
+        })
+        .finally(() => {
+            this.setState({ isLoading: false })
+        })
     }
 
     saveNewStatus() {
@@ -86,6 +95,27 @@ export default class MyProfile extends Component {
             this.setState({newImage: `data:image/jpeg;base64,${Buffer(reader.result).toString("base64")}`});
         };
     };
+    captureFileBackground = (event) => {
+        event.preventDefault();
+        const file = event.target.files[0];
+        const reader = new window.FileReader();
+        reader.readAsArrayBuffer(file);
+        reader.onloadend = () => {
+            this.setState({ 
+                settings: {
+                    backgroundImage: `data:image/jpeg;base64,${Buffer(reader.result).toString("base64")}`
+                }
+            });
+        };
+    }
+    defaultBackground = (event) => {
+        event.preventDefault();
+        this.setState({
+            settings: {
+                backgroundImage: false
+            }
+        })
+    }
 
     handleNewStatusSubmit(event) {
         this.saveNewStatus()
@@ -105,6 +135,21 @@ export default class MyProfile extends Component {
     logUserInfo = () => {
         console.log(loadUserData());
     }
+    toggleSettings = () => {
+        this.setState({changeInfo: !this.state.changeInfo})
+    }
+    saveSettings = () => {
+        let settings = this.state.settings
+
+        const options = { encrypt: false }
+        putFile('settings.json', JSON.stringify(settings), options)
+        .then(() => {
+            this.setState({
+                changeInfo: false
+            })
+        })
+    }
+
     parseDate = (time) => {
         let now = Date.now();
         if (Math.floor((now - time) / (1000 * 60)) < 60) {
@@ -119,7 +164,7 @@ export default class MyProfile extends Component {
     render() {
         const { person, username } = this.props;
         const backgroundStyle = {
-            'backgroundImage': `url("${backPic}"`
+            'backgroundImage': `url("${this.state.settings.backgroundImage ? this.state.settings.backgroundImage : backPic}"`
         }
         return (
             !isSignInPending() && person ?
@@ -150,7 +195,7 @@ export default class MyProfile extends Component {
                                 </Col>
                                 <Col xs={9}>
                                     <img src={settingsIcon} 
-                                    onClick={this.logUserInfo}
+                                    onClick={this.toggleSettings}
                                     className='bio-icons'/>
                                 </Col>
                             </Row>
@@ -176,6 +221,45 @@ export default class MyProfile extends Component {
                         <Col xs={1} md={2}></Col>
                         <Col xs={10} md={8}>
                         {this.isLocal() &&
+                            <div>
+                                    {this.state.changeInfo &&
+                                        <div className="new-status settings">
+                                        <Row>
+                                            <Col md={12}>
+                                                <Form>
+                                                    <Form.Group as={Row} controlId="formPlaintextEmail">
+                                                        <Form.Label column sm="3">
+                                                            Display name
+                                                    </Form.Label>
+                                                        <Col sm="9">
+                                                            <Form.Control plaintext readOnly defaultValue={person.name() ? person.name()
+                                                                : 'Nameless Person'} />
+                                                        </Col>
+                                                    </Form.Group>
+
+                                                    <Form.Group as={Row} controlId="formPlaintextPassword">
+                                                        <Form.Label column sm="3">
+                                                            Background image
+                                                    </Form.Label>
+                                                        <Col sm="9">
+                                                            <label class="btn btn-outline-success">
+                                                                Upload <input type="file" onChange={this.captureFileBackground} hidden />
+                                                            </label>
+                                                            {'     '}
+                                                            <label class="btn btn-outline-danger" onClick={this.defaultBackground}>
+                                                                Default
+                                                            </label>
+                                                        </Col>
+                                                    </Form.Group>
+                                                        <hr />
+                                                    <Button variant="success" onClick={this.saveSettings}>
+                                                        Save
+                                                </Button>
+                                                </Form>
+                                            </Col>
+                                        </Row>
+                                        </div>
+                                    }
                             <div className="new-status">
                                 <Row>
                                     <Col md={12}>
@@ -212,6 +296,7 @@ export default class MyProfile extends Component {
                                     </Button>
                                 </Col>
                                 </Row>
+                            </div>
                             </div>
                         }</Col>
                         <Col xs={1} md={2}></Col>

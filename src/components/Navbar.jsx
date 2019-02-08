@@ -30,7 +30,6 @@ class Navigationbar extends Component {
         this.setState({
             searchUser: event.target.value
         })
-        console.log(event.target.value)
     }
 
 
