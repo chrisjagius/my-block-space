@@ -66,10 +66,12 @@ export default class MyProfile extends Component {
     saveNewStatus() {
         let statuses = this.state.statuses;
         let idNumber = this.state.statusIndex;
+        let text = this.state.newStatus.trim();
+        if (text.length === 0) {return false};
 
         let status = {
             id: idNumber++,
-            text: this.state.newStatus.trim(),
+            text: text,
             created_at: Date.now(),
             image: this.state.newImage
         }
