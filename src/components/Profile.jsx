@@ -81,9 +81,10 @@ export default class Profile extends Component {
         event.preventDefault();
         let friends = this.props.friends
         let user = this.state.username
-        const filtered = friends.filter(username => username !== user)
+        friends = friends.filter(username => username !== user)
+        this.props.updateFriends(friends);
         const options = { encrypt: false }
-        putFile('friends.json', JSON.stringify(filtered), options)
+        putFile('friends.json', JSON.stringify(friends), options)
         .then((result) => {
             console.log('res ,', result)
             this.setState({ following: false })

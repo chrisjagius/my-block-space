@@ -88,6 +88,9 @@ export default class App extends Component {
   searchFor = (name) => {
     this.props.history.push(`/users/${name}`)
   }
+  updateFriends = (friends) => {
+    this.setState({friends: friends})
+  }
 
   componentWillMount() {
     if (isSignInPending()) {
@@ -118,6 +121,7 @@ export default class App extends Component {
               path='/users/:username'
               render={
                 props => <Profile
+                  updateFriends={this.updateFriends}
                   friends={this.state.friends}
                   person={this.state.person}
                   username={this.state.username}
@@ -127,7 +131,7 @@ export default class App extends Component {
             <Route
               path='/:username'
               render={
-                props => <MyProfile 
+                props => <MyProfile
                 searchFor={this.searchFor}
                 friends={this.state.friends} 
                 person={this.state.person}
