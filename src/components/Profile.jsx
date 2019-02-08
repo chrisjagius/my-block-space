@@ -79,6 +79,7 @@ export default class Profile extends Component {
                 console.log('res ,', result)
                 this.setState({ following: true })
             })
+        this.setState({following: true})
     }
     unFriend = (event) => {
         event.preventDefault();
