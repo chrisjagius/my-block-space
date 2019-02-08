@@ -80,6 +80,7 @@ export default class Profile extends Component {
             .then((result) => {
                 console.log('res ,', result)
             })
+        this.setState({following: true})
     }
 
     componentDidMount() {
