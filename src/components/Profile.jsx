@@ -9,6 +9,8 @@ import {
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import backPic from '../assets/standard-wallpaper.jpg';
 import NoResult from './NoResult';
+import Post from './Post';
+import Loader from './Loader';
 
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
@@ -93,24 +95,12 @@ export default class Profile extends Component {
 
     componentDidMount() {
         this.fetchData();
-        this.parseDate()
     }
     componentWillReceiveProps() {
         this.fetchData()
     }
     logUserInfo = () => {
         console.log(loadUserData());
-    }
-
-    parseDate = (time) => {
-        let now = Date.now();
-        if (Math.floor((now - time) / (1000 * 60)) < 60) {
-            return `${Math.floor((now - time) / (1000 * 60))} m`
-        } else if (Math.floor((now - time) / (1000 * 60 * 60)) < 24) {
-            return `${Math.floor((now - time) / (1000 * 60 * 60))} h`
-        } else if (Math.floor((now - time) / (1000 * 60 * 60 * 24)) < 7) {
-            return `${Math.floor((now - time) / (1000 * 60 * 60 * 24))} d`
-        }
     }
     
 
@@ -119,7 +109,7 @@ export default class Profile extends Component {
         const backgroundStyle = {
             'backgroundImage': `url("${backPic}"`
         }
-        const loader = <div className="container-myprofile"><div className='loader'></div></div>;
+        // const L = <div className="container-myprofile"><div className='L'></div></div>;
         if (this.props.match.params.username !== username) {
             this.fetchData();
         }
@@ -127,7 +117,7 @@ export default class Profile extends Component {
         return (
 
             <div>
-            {isLoading && loader}
+            {isLoading && <Loader/>}
             {!isLoading && person ?
                     <div className="container-myprofile">
                         <div style={backgroundStyle} className='container-desc-prof'>
@@ -197,30 +187,7 @@ export default class Profile extends Component {
                                 <Col xs={10} md={8}>
                                     {this.state.isLoading && <span>Loading...</span>}
                                     {this.state.statuses.map((status) => (
-                                        <div className="my-post" key={status.id}>
-                                            <Row>
-                                                <Col xs={2}>
-                                                    <img alt=''
-                                                        src={person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage}
-                                                        className="post-img"
-                                                    />
-                                                </Col>
-                                                <Col xs={3} className='poster-info'>
-                                                    {username}
-                                                </Col>
-                                                <Col xs={4}></Col>
-                                                <Col xs={3}>
-                                                    <span className='post-date'>{this.parseDate(status.created_at)}</span>
-                                                </Col>
-                                            </Row>
-                                            <hr />
-                                            {
-                                                status.image &&
-                                                <div className='post-pic-container'>
-                                                    <img alt='' className='post-pic' src={status.image} />
-                                                    <hr /></div>}
-                                            <pre>{status.text}</pre>
-                                        </div>
+                                        <Post person={person} username={username} status={status} />
                                     )
                                     )}
                                 </Col>
