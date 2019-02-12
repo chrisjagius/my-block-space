@@ -3,7 +3,7 @@
 {
   "name": "My Block Space",
   "start_url": "https://www.myblockspace.com",
-  "description": "A simple social app build on blockstack",
+  "description": "A social app build with blockstack",
   "icons": [
     {
       "src": "https://helloblockstack.com/icon-192x192.png",
