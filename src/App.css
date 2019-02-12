@@ -74,6 +74,10 @@
   margin-top: 0.1em;
   border-radius: 50%
 }
+.nav-home-link {
+  color: black !important;
+  text-decoration: none !important;
+}
 
 
 /* brown #925C52
@@ -261,6 +265,12 @@ hr {
   height: 120px;
   animation: spin 2s linear infinite;
   z-index: 2;
+}
+
+.feed-container {
+  background-color: #f3f3f3;
+  margin-top: 3.5em;
+  min-height: 95vh;
 }
 
 @keyframes spin {

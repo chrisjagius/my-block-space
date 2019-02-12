@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import MyProfile from './components/MyProfile.jsx';
-import Signin from './components/Signin.jsx';
-import Navbar from './components/Navbar.jsx';
+import MyProfile from './components/MyProfile';
+import Signin from './components/Signin';
+import Navbar from './components/Navbar';
 import Profile from './components/Profile';
+import Feed from './components/Feed';
 import {
   isSignInPending,
   isUserSignedIn,
@@ -47,6 +48,7 @@ export default class App extends Component {
     }
   }
 
+  // function checks if user is signed in.
   checkSignedInStatus = () => {
     if (isUserSignedIn()) {
       return true;
@@ -129,14 +131,36 @@ export default class App extends Component {
               }
             />
             <Route
+              exact path='/feed'
+              render={
+                props => <Feed
+                  searchFor={this.searchFor}
+                  friends={this.state.friends}
+                  person={this.state.person}
+                  username={this.state.username}
+                  {...props} />
+              }
+            />
+            <Route
               path='/:username'
               render={
                 props => <MyProfile
-                searchFor={this.searchFor}
-                friends={this.state.friends} 
-                person={this.state.person}
-                username={this.state.username}
-                {...props} />
+                  searchFor={this.searchFor}
+                  friends={this.state.friends}
+                  person={this.state.person}
+                  username={this.state.username}
+                  {...props} />
+              }
+            />
+            <Route
+              exact path='/'
+              render={
+                props => <Feed
+                  searchFor={this.searchFor}
+                  friends={this.state.friends}
+                  person={this.state.person}
+                  username={this.state.username}
+                  {...props} />
               }
             />
             

@@ -42,8 +42,9 @@ class Navigationbar extends Component {
         return (
             <div>
                 <Navbar bg="light" collapseOnSelect fixed="top" expand="sm" >
-                        <Navbar.Brand>
-                            My Block Space
+                        <Navbar.Brand >
+                        <Link className='nav-home-link' to='/feed'>
+                            My Block Space</Link>
                         </Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
