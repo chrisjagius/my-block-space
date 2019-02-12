@@ -42,12 +42,13 @@ export default class Feed extends Component {
                 .catch((error) => {
                     console.log('fail')
                 })
-                .finally(() => {
+                .finally(async () => {
                     console.log(username, ' and ', friends[friends.length - 1])
                     if (username === friends[friends.length - 1]) {
+                        let result = await this.mergeSort(keyCreatedAt).reverse()
                         this.setState({ 
                             allPosts: unsortedPosts, 
-                            order: this.mergeSort(keyCreatedAt).reverse(), 
+                            order: result, 
                             isLoading: false
                         })
                     }
