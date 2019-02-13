@@ -1,20 +1,54 @@
 const path = require('path');
 const { paths } = require('react-app-rewired');
+const StatsPlugin = require('stats-webpack-plugin');
 
 module.exports = {
   webpack: function (config, env) {
     if (env === 'production') {
+      if (!config.plugins) {
+        // It should already exist, but initialize it if it does not already exist.
+        config.plugins = [
+          HtmlWebpackPluginConfig,
+          ManifestAssetPlugin,
+          IconAssetPlugin,
+          new UglifyJsPlugin({
+            uglifyOptions: {
+              mangle: {
+                reserved: [
+                  'Buffer',
+                  'BigInteger',
+                  'Point',
+                  'ECPubKey',
+                  'ECKey',
+                  'sha512_asm',
+                  'asm',
+                  'ECPair',
+                  'HDNode'
+                ]
+              }
+            }
+          })
+        ];
+      }
+      config.plugins.push(
+        new StatsPlugin('stats.json', {
+          // Replace the next 2 lines with any options you need to give to the stats plugin - these are their example options.
+          chunkModules: true,
+          exclude: [/node_modules[\\\/]react/]
+        })
+      );
       config.module.rules[1].oneOf[1].include = [
         paths.appSrc,
         path.resolve(paths.appNodeModules, 'bitcoinjs-lib'),
         path.resolve(paths.appNodeModules, 'tiny-secp256k1'),
         path.resolve(paths.appNodeModules, 'jsontokens'),
-        path.resolve(paths.appNodeModules, 'bip32')
+        path.resolve(paths.appNodeModules, 'bip32'),
+        path.resolve(paths.appNodeModules, 'base64url'),
+        path.resolve(paths.appNodeModules, 'typeforce'),
+        path.resolve(paths.appNodeModules, 'key-encoder'),
+        path.resolve(paths.appNodeModules, 'base-x'),
+        path.resolve(paths.appNodeModules, 'uri-js')
       ];
-      config.module.rules[1].oneOf[1].loader = require.resolve('babel-loader'),
-      config.module.rules[1].oneOf[1].options = {
-        compact: true
-      }
     }
     return config;
   },
@@ -52,5 +86,3 @@ module.exports = {
     };
   }
 }
-
-
