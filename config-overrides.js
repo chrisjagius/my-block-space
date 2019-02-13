@@ -4,18 +4,16 @@ const { paths } = require('react-app-rewired');
 module.exports = {
   webpack: function (config, env) {
     if (env === 'production') {
-      config.module.rules[1].oneOf[1] = {
-        include: [
-          paths.appSrc,
-          path.resolve(paths.appNodeModules, 'bitcoinjs-lib'),
-          path.resolve(paths.appNodeModules, 'tiny-secp256k1'),
-          path.resolve(paths.appNodeModules, 'jsontokens'),
-          path.resolve(paths.appNodeModules, 'bip32')
-        ],
-        loader: require.resolve('babel-loader'),
-        options: {
-          compact: true
-        }
+      config.module.rules[1].oneOf[1].include = [
+        paths.appSrc,
+        path.resolve(paths.appNodeModules, 'bitcoinjs-lib'),
+        path.resolve(paths.appNodeModules, 'tiny-secp256k1'),
+        path.resolve(paths.appNodeModules, 'jsontokens'),
+        path.resolve(paths.appNodeModules, 'bip32')
+      ];
+      config.module.rules[1].oneOf[1].loader = require.resolve('babel-loader'),
+      config.module.rules[1].oneOf[1].options = {
+        compact: true
       }
     }
     return config;
@@ -54,3 +52,5 @@ module.exports = {
     };
   }
 }
+
+
