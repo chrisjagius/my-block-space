@@ -10,13 +10,15 @@ export default class Feed extends Component {
         this.state = {
             allPosts: [],
             isLoading: false,
-            order: []
+            order: [],
+            noFriends: false
         }
     }
 
     fetchPostsFromFriends = () => {
         this.setState({isLoading: true})
         const { friends } = this.props;
+        if (friends.length === 0) { return this.setState({ noFriends: true, isLoading: false})}
         let unsortedPosts = {};
         let keyCreatedAt = []
         friends.forEach(async (username) => {
@@ -49,7 +51,8 @@ export default class Feed extends Component {
                         this.setState({ 
                             allPosts: unsortedPosts, 
                             order: result, 
-                            isLoading: false
+                            isLoading: false,
+                            noFriends: false
                         })
                     }
                 })
@@ -104,7 +107,8 @@ export default class Feed extends Component {
                     <Col xs={1} md={2}></Col>
                     <Col xs={10} md={8}>
                         {this.state.isLoading && <Loader />}
-                        {!this.state.isLoading && this.state.order.map((index) => this.state.allPosts[index])}
+                        {this.state.noFriends && <h1>Oepsie, you have no frinds yet</h1>}
+                        {!this.state.noFriends && !this.state.isLoading && this.state.order.map((index) => this.state.allPosts[index])}
                     </Col>
                     <Col xs={1} md={2}></Col>
                 </Row>
