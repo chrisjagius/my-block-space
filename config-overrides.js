@@ -1,15 +1,46 @@
 const path = require('path');
 const { paths } = require('react-app-rewired');
-const StatsPlugin = require('stats-webpack-plugin');
-const {
-  rewireBlockstackBuild,
-  rewireBlockstackDevServer
-} = require('react-app-rewire-blockstack')
+
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ManifestAssetPlugin = new CopyWebpackPlugin([{ from: 'src/assets/manifest.json', to: 'manifest.json' }]);
+// const IconAssetPlugin = new CopyWebpackPlugin([{ from: 'src/images/icon-192x192.png', to: 'icon-192x192.png' }]);
+const UglifyEsPlugin = require('uglify-es-webpack-plugin');
+const UglifyEsPluginConfig = new UglifyEsPlugin({
+  mangle: {
+    reserved: [
+      'Buffer',
+      'BigInteger',
+      'Point',
+      'ECPubKey',
+      'ECKey',
+      'sha512_asm',
+      'asm',
+      'ECPair',
+      'HDNode'
+    ]
+  }
+})
+
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
+  template: './src/index.html',
+  filename: 'index.html',
+  inject: 'body'
+});
 
 module.exports = {
   webpack: function (config, env) {
     if (env === 'production') {
-      config = rewireBlockstackBuild(config)
+      if (!config.plugins) {
+        // It should already exist, but initialize it if it does not already exist.
+        config.plugins = [
+          HtmlWebpackPluginConfig,
+          ManifestAssetPlugin,
+          IconAssetPlugin,
+          UglifyEsPluginConfig
+        ];
+      }
+      
       config.module.rules[1].oneOf[1].include = [
         paths.appSrc,
         path.resolve(paths.appNodeModules, 'bitcoinjs-lib'),
