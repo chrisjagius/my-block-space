@@ -4,20 +4,22 @@ const { paths } = require('react-app-rewired');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ManifestAssetPlugin = new CopyWebpackPlugin([{ from: 'src/assets/manifest.json', to: 'manifest.json' }]);
 // const IconAssetPlugin = new CopyWebpackPlugin([{ from: 'src/images/icon-192x192.png', to: 'icon-192x192.png' }]);
-const UglifyEsPlugin = require('uglify-es-webpack-plugin');
+const UglifyEsPlugin = require('uglifyjs-webpack-plugin');
 const UglifyEsPluginConfig = new UglifyEsPlugin({
-  mangle: {
-    reserved: [
-      'Buffer',
-      'BigInteger',
-      'Point',
-      'ECPubKey',
-      'ECKey',
-      'sha512_asm',
-      'asm',
-      'ECPair',
-      'HDNode'
-    ]
+  uglifyOptions: {
+    mangle: {
+      reserved: [
+        'Buffer',
+        'BigInteger',
+        'Point',
+        'ECPubKey',
+        'ECKey',
+        'sha512_asm',
+        'asm',
+        'ECPair',
+        'HDNode'
+      ]
+    }
   }
 })
 
@@ -33,14 +35,13 @@ module.exports = {
     if (env === 'production') {
       if (!config.plugins) {
         // It should already exist, but initialize it if it does not already exist.
-        config.plugins = [
+        config.plugins.push([
           HtmlWebpackPluginConfig,
           ManifestAssetPlugin,
           IconAssetPlugin,
           UglifyEsPluginConfig
-        ];
+        ]);
       }
-      
       config.module.rules[1].oneOf[1].include = [
         paths.appSrc,
         path.resolve(paths.appNodeModules, 'bitcoinjs-lib'),
