@@ -2,13 +2,11 @@ const {
   rewireBlockstackBuild,
   rewireBlockstackDevServer
 } = require('react-app-rewire-blockstack')
-const rewireUglifyjs = require('react-app-rewire-uglifyjs');
 
 module.exports = {
   webpack: (config, env) => {
     if (env === 'production') {
       config = rewireBlockstackBuild(config)
-      config = rewireUglifyjs(config);
     }
     return config
   },
