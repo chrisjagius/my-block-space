@@ -11,17 +11,24 @@
   "devDependencies": {
     "express": "^4.15.2",
     "opn": "^4.0.2",
-    "react-app-rewired": "^1.6.2"
+    "react-app-rewired": "^1.6.2",
+    "react-app-rewire-blockstack": "^1.0.7",
+    "react-scripts": "2.1.1"
   },
   "dependencies": {
     "blockstack": "latest",
-    "bootstrap": "^4.2.1",
     "react": "^16.8.1",
     "react-app-rewire-blockstack": "^1.0.7",
     "react-bootstrap": "^1.0.0-beta.5",
     "react-dom": "^16.8.1",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "1.0.17",
+    "react-scripts": "2.1.1",
     "stats-webpack-plugin": "^0.7.0"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
