@@ -4,7 +4,6 @@ const {
 } = require('react-app-rewire-blockstack')
 
 module.exports = {
-
   webpack: (config, env) => {
     if (env === 'production') {
       config = rewireBlockstackBuild(config)
