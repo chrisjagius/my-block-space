@@ -1,11 +1,18 @@
 const path = require('path');
 const { paths } = require('react-app-rewired');
-const rewireUglifyjs = require('react-app-rewire-uglifyjs');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ManifestAssetPlugin = new CopyWebpackPlugin([{ from: 'public/manifest.json', to: 'manifest.json' }]);
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
+  template: './src/index.html',
+  filename: 'index.html',
+  inject: 'body'
+});
 
 module.exports = {
   webpack: function (config, env) {
     if (env === 'production') {
-      config = rewireUglifyjs(config);
       config.module.rules[1].oneOf[1].include = [
         paths.appSrc,
         path.resolve(paths.appNodeModules, 'bitcoinjs-lib'),
@@ -18,6 +25,27 @@ module.exports = {
         path.resolve(paths.appNodeModules, 'base-x'),
         path.resolve(paths.appNodeModules, 'uri-js')
       ];
+      // config.plugins = [HtmlWebpackPluginConfig,
+      //   ManifestAssetPlugin,
+      //   new UglifyJsPlugin({
+      //     uglifyOptions: {
+      //       mangle: {
+      //         reserved: [
+      //           'Buffer',
+      //           'BigInteger',
+      //           'Point',
+      //           'ECPubKey',
+      //           'ECKey',
+      //           'sha512_asm',
+      //           'asm',
+      //           'ECPair',
+      //           'HDNode'
+      //         ]
+      //       }
+      //     }
+      //   })];
+      config.loader = {loader: require.resolve('babel-loader')}
+      
     }
     return config;
   },
