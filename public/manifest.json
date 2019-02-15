@@ -8,7 +8,7 @@
   "background_color": "#ffffff",
   "theme_color": "#000000",
   "display": "standalone",
-  "start_url": "./index.html",
+  "start_url": ".",
   "description": "A social app build with blockstack",
   "icons": [
     {
