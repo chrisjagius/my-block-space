@@ -9,18 +9,20 @@ export default class Post extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            now: Date.now()
         }
     }
 
     parseDate = (time) => {
-        let now = Date.now();
+        const { now } = this.state;
         if (Math.floor((now - time) / (1000 * 60)) < 60) {
             return `${Math.floor((now - time) / (1000 * 60))} m`
         } else if (Math.floor((now - time) / (1000 * 60 * 60)) < 24) {
             return `${Math.floor((now - time) / (1000 * 60 * 60))} h`
         } else if (Math.floor((now - time) / (1000 * 60 * 60 * 24)) < 7) {
             return `${Math.floor((now - time) / (1000 * 60 * 60 * 24))} d`
+        } else if (Math.floor((now - time) / (1000 * 60 * 60 * 24)) < 365) {
+            return `${Math.floor(Math.floor((now - time) / (1000 * 60 * 60 * 24)) / 7)} w`
         }
     }
 
@@ -50,7 +52,7 @@ export default class Post extends Component {
                     </Col>
                     <Col xs={4}></Col>
                     <Col xs={3}>
-                        <span className='post-date'>{this.parseDate(status.created_at)}</span>
+                        <span className='post-date'>{`${this.parseDate(status.created_at)} ago`}</span>
                     </Col>
                 </Row>
                 <hr />

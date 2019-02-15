@@ -47,7 +47,7 @@ export default class Feed extends Component {
                 .finally(async () => {
                     console.log(username, ' and ', friends[friends.length - 1])
                     if (username === friends[friends.length - 1]) {
-                        let result = await this.mergeSort(keyCreatedAt).reverse()
+                        let result = await this.mergeSort(keyCreatedAt)
                         this.setState({ 
                             allPosts: unsortedPosts, 
                             order: result, 
@@ -80,7 +80,7 @@ export default class Feed extends Component {
         let rightIndex = 0;
         while (leftIndex < left.length &&
             rightIndex < right.length) {
-            if (left[leftIndex] < right[rightIndex]) {
+            if (left[leftIndex] > right[rightIndex]) {
                 result.push(left[leftIndex]);
                 leftIndex++;
             } else {
