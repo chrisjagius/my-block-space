@@ -8,7 +8,7 @@
   "background_color": "#ffffff",
   "theme_color": "#000000",
   "display": "standalone",
-  "start_url": "https://www.myblockspace.com",
+  "start_url": "./index.html",
   "description": "A social app build with blockstack",
   "icons": [
     {
