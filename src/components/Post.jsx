@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import { Row, Col } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
 
@@ -38,17 +39,17 @@ export default class Post extends Component {
         const {person, username, status} = this.props;
 
         return (
-            <div className="my-post" key={status.id}>
+            <div className="my-post" >
                 <Row className='poster-info'>
                     <Col xs={2}>
-                        <img
+                        <Link className='post-link' to={`/users/${username}`}><img
                             src={person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage}
                             alt=''
                             className="post-img"
-                        />
+                        /></Link>
                     </Col>
                     <Col xs={3} className='poster-info'>
-                        {username}
+                        <Link className='post-link' to={`/users/${username}`}>{username}</Link>
                     </Col>
                     <Col xs={4}></Col>
                     <Col xs={3}>

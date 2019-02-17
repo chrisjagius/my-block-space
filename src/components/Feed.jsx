@@ -36,8 +36,9 @@ export default class Feed extends Component {
                     var statuses = JSON.parse(file || '[]')
                     if (statuses.length > 0) {
                         statuses.forEach((status) => {
-                            keyCreatedAt.push(status.created_at)
-                            unsortedPosts[status.created_at] =  <Post person={person} username={username} status={status} />
+                            const time = status.created_at
+                            keyCreatedAt.push(time)
+                            unsortedPosts[time] = <Post person={person} username={username} status={status} key={time}/>
                         })
                     }
                 })
@@ -45,7 +46,6 @@ export default class Feed extends Component {
                     console.log('fail')
                 })
                 .finally(async () => {
-                    console.log(username, ' and ', friends[friends.length - 1])
                     if (username === friends[friends.length - 1]) {
                         let result = await this.mergeSort(keyCreatedAt)
                         this.setState({ 
@@ -107,7 +107,7 @@ export default class Feed extends Component {
                     <Col xs={1} md={2}></Col>
                     <Col xs={10} md={8}>
                         {this.state.isLoading && <Loader />}
-                        {this.state.noFriends && <h1>Oepsie, you have no frinds yet</h1>}
+                        {this.state.noFriends && !this.state.isLoading && <h1>Oepsie, you have no frinds yet</h1>}
                         {!this.state.noFriends && !this.state.isLoading && this.state.order.map((index) => this.state.allPosts[index])}
                     </Col>
                     <Col xs={1} md={2}></Col>

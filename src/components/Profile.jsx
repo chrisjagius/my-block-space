@@ -45,7 +45,9 @@ export default class Profile extends Component {
                 })
             })
             .catch((error) => {
-                console.log('could not resolve profile')
+                this.setState({
+                    person: false
+                })
             })
 
         const options = { username: username, decrypt: false }
@@ -108,10 +110,6 @@ export default class Profile extends Component {
         const { person, username, isLoading } = this.state;
         const backgroundStyle = {
             'backgroundImage': `url("${backPic}"`
-        }
-        // const L = <div className="container-myprofile"><div className='L'></div></div>;
-        if (this.props.match.params.username !== username) {
-            this.fetchData();
         }
         
         return (
@@ -187,7 +185,7 @@ export default class Profile extends Component {
                                 <Col xs={10} md={8}>
                                     {this.state.isLoading && <span>Loading...</span>}
                                     {this.state.statuses.map((status) => (
-                                        <Post person={person} username={username} status={status} />
+                                        <Post person={person} username={username} status={status} key={status.created_at} />
                                     )
                                     )}
                                 </Col>

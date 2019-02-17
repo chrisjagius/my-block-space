@@ -28,7 +28,10 @@ export default class MyProfile extends Component {
             changeInfo: false,
             newImage: false,
             settings: {
-                backgroundImage: false
+                backgroundImage: false,
+                image: false,
+                bio: false,
+                displayName: false
             },
             displayFriends: false
         };
@@ -138,6 +141,16 @@ export default class MyProfile extends Component {
         this.fetchData();
     }
 
+    handleChangeSettings = (e) => {
+        const { name, value } = e.target;
+        this.setState((prevState) => ({
+            settings: {
+                ...prevState.settings,
+                [name]: value
+            }
+        }));
+    }
+
     logUserInfo = () => {
         console.log(loadUserData());
     }
@@ -164,6 +177,38 @@ export default class MyProfile extends Component {
         const backgroundStyle = {
             'backgroundImage': `url("${this.state.settings.backgroundImage ? this.state.settings.backgroundImage : backPic}"`
         }
+        const settingsForm = (<div className="new-status settings">
+            <Row>
+                <Col md={12}>
+                    <Form>
+                        <Form.Group as={Row} controlId="formPlaintextEmail">
+                            <Form.Label column sm="12">
+                                To change the display name, image and bio press <a target='_blank' href='https://browser.blockstack.org/profiles' >here</a>.
+                            </Form.Label>
+                        </Form.Group>
+
+                        <Form.Group as={Row} controlId="formPlaintextPassword">
+                            <Form.Label column sm="3">
+                                Background image
+                            </Form.Label>
+                            <Col sm="9">
+                                <label className="btn btn-outline-success">
+                                    Upload <input type="file" onChange={this.captureFileBackground} hidden />
+                                </label>
+                                {'     '}
+                                <label className="btn btn-outline-danger" onClick={this.defaultBackground}>
+                                    Default
+                                </label>
+                            </Col>
+                        </Form.Group>
+                        <hr />
+                        <Button variant="success" onClick={this.saveSettings}>
+                            Save
+                        </Button>
+                    </Form>
+                </Col>
+            </Row>
+        </div>);
         const friendDisplay = this.props.friends.length > 0 ? (<div className='profile-posts'>
             <div className="my-post"><h1>Friends</h1>
             <ListGroup variant="flush">
@@ -256,44 +301,7 @@ export default class MyProfile extends Component {
                         <Col xs={10} md={8}>
                         {this.isLocal() &&
                             <div>
-                                    {this.state.changeInfo &&
-                                        <div className="new-status settings">
-                                        <Row>
-                                            <Col md={12}>
-                                                <Form>
-                                                    <Form.Group as={Row} controlId="formPlaintextEmail">
-                                                        <Form.Label column sm="3">
-                                                            Display name
-                                                    </Form.Label>
-                                                        <Col sm="9">
-                                                            <Form.Control plaintext readOnly defaultValue={person.name() ? person.name()
-                                                                : 'Nameless Person'} />
-                                                        </Col>
-                                                    </Form.Group>
-
-                                                    <Form.Group as={Row} controlId="formPlaintextPassword">
-                                                        <Form.Label column sm="3">
-                                                            Background image
-                                                    </Form.Label>
-                                                        <Col sm="9">
-                                                            <label class="btn btn-outline-success">
-                                                                Upload <input type="file" onChange={this.captureFileBackground} hidden />
-                                                            </label>
-                                                            {'     '}
-                                                            <label class="btn btn-outline-danger" onClick={this.defaultBackground}>
-                                                                Default
-                                                            </label>
-                                                        </Col>
-                                                    </Form.Group>
-                                                        <hr />
-                                                    <Button variant="success" onClick={this.saveSettings}>
-                                                        Save
-                                                </Button>
-                                                </Form>
-                                            </Col>
-                                        </Row>
-                                        </div>
-                                    }
+                                {this.state.changeInfo && settingsForm }
                             <div className="new-status">
                                 <Row>
                                     <Col md={12}>
@@ -340,7 +348,7 @@ export default class MyProfile extends Component {
                         <Col xs={10} md={8}>
                                 {this.state.isLoading && <Loader/>}
                                 {this.state.statuses.map((status) => (
-                                    <Post person={person} username={username} status={status} />
+                                    <Post person={person} username={username} status={status} key={status.created_at} />
                                 )
                                 )}
                         </Col>
