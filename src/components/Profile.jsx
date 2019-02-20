@@ -65,9 +65,7 @@ export default class Profile extends Component {
             .finally(() => {
                 this.setState({ isLoading: false })
             })
-        this.props.friends.map(x => {
-            return x === username ? this.setState({ following: true }) : this.setState({ following: false });
-        })
+        this.props.friends.includes(username) ? this.setState({ following: true }) : this.setState({ following: false });
     }
     addFriend = (event) => {
         event.preventDefault();

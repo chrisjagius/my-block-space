@@ -183,7 +183,7 @@ export default class MyProfile extends Component {
                     <Form>
                         <Form.Group as={Row} controlId="formPlaintextEmail">
                             <Form.Label column sm="12">
-                                To change the display name, image and bio press <a target='_blank' href='https://browser.blockstack.org/profiles' >here</a>.
+                                To change the display name, image and bio press <a target='_blank' href='https://browser.blockstack.org/profiles' rel="noopener noreferrer" >here</a>.
                             </Form.Label>
                         </Form.Group>
 

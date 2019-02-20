@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { Navbar, Nav, InputGroup, FormControl, Button } from 'react-bootstrap';
 import {signUserOut} from 'blockstack';
 import { Link } from 'react-router-dom';
+import logo from '../assets/3.png';
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
+
 
 
 
@@ -18,10 +20,7 @@ class Navigationbar extends Component {
         event.preventDefault();
         signUserOut(window.location.origin)
     }
-    // this is a work in progress
-    handleSearch = (event) => {
-        
-    }
+    
     handleKeyPress = (e) => {
         e.preventDefault();
         this.props.searchFor(this.state.searchUser);
@@ -41,21 +40,21 @@ class Navigationbar extends Component {
         
         return (
             <div>
-                <Navbar bg="light" collapseOnSelect fixed="top" expand="sm" >
+                <Navbar bg="light" collapseOnSelect fixed="top" expand="sm" className='navbar-con'>
                         <Navbar.Brand >
                         <Link className='nav-home-link' to='/feed'>
-                            My Block Space</Link>
+                            <img
+                                src={logo}
+                                width="30"
+                                height="30"
+                                className="d-inline-block align-top logo-nav"
+                                alt="MY BLOCK SPACE"
+                            />
+                        </Link>
                         </Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className='mr-auto'>
-
-                            {/* <Form onSubmit={e => this.handleKeyPress(e)}>
-                                <FormControl style={formStyle} type="text" value={this.state.searchUser} placeholder="Search for friends" 
-                                    onChange={e => this.handleChange(e)}
-                                />
-                            </Form> */}
-
                             <InputGroup size="sm">
                                 <FormControl
                                     type="text"

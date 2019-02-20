@@ -3,6 +3,7 @@ import { Person, lookupProfile, getFile } from 'blockstack';
 import Post from './Post';
 import Loader from './Loader';
 import { Row, Col } from 'react-bootstrap';
+import InfiniteScroll from './InfiniteScroll';
 
 export default class Feed extends Component {
     constructor(props) {
@@ -108,7 +109,8 @@ export default class Feed extends Component {
                     <Col xs={10} md={8}>
                         {this.state.isLoading && <Loader />}
                         {this.state.noFriends && !this.state.isLoading && <h1>Oepsie, you have no frinds yet</h1>}
-                        {!this.state.noFriends && !this.state.isLoading && this.state.order.map((index) => this.state.allPosts[index])}
+                        {!this.state.noFriends && !this.state.isLoading && 
+                        <InfiniteScroll array={false} order={this.state.order} allPosts={this.state.allPosts} />}
                     </Col>
                     <Col xs={1} md={2}></Col>
                 </Row>
