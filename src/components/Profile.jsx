@@ -118,21 +118,24 @@ export default class Profile extends Component {
                     <div className="container-myprofile">
                         <div style={backgroundStyle} className='container-desc-prof'>
                             <Container>
-                                <Row className="myprofile-bio">
+                                <Row >
+                                    <Col xs={12} md={3} className="myprofile-bio-wrap">
+                                        <div className="myprofile-bio">
+                                            <div className='bio-left'>
+                                                <img
+                                                    src={person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage}
+                                                    className="avatar"
+                                                    alt='Avatar'
+                                                />
+                                            </div>
+                                            <span className="heading-name">{person.name() ? person.name()
+                                                : 'Nameless Person'}
+                                            </span><br />
 
-                                    <Col xs={12} md={3} className='bio-left'>
-                                        <img alt=''
-                                            src={person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage}
-                                            className="img-rounded avatar"
-                                            id="avatar-image"
-                                        />
+                                            <span className='display-username text-secondary'>{username}</span>
+                                        </div>
                                     </Col>
-                                    <Col xs={12} md={9} className='bio-right'>
-                                        <h1>
-                                            <span id="heading-name">{person.name() ? person.name()
-                                                : 'Nameless Person'}</span>
-                                        </h1>
-                                    </Col>
+
                                 </Row>
                             </Container>
                             <div className='myprofile-options'>
