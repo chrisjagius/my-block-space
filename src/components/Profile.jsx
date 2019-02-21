@@ -11,8 +11,7 @@ import backPic from '../assets/standard-wallpaper.jpg';
 import NoResult from './NoResult';
 import Post from './Post';
 import Loader from './Loader';
-
-const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
+import UserInfo from './UserInfo';
 
 export default class Profile extends Component {
     constructor(props) {
@@ -117,27 +116,7 @@ export default class Profile extends Component {
             {!isLoading && person ?
                     <div className="container-myprofile">
                         <div style={backgroundStyle} className='container-desc-prof'>
-                            <Container>
-                                <Row >
-                                    <Col xs={12} md={3} className="myprofile-bio-wrap">
-                                        <div className="myprofile-bio">
-                                            <div className='bio-left'>
-                                                <img
-                                                    src={person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage}
-                                                    className="avatar"
-                                                    alt='Avatar'
-                                                />
-                                            </div>
-                                            <span className="heading-name">{person.name() ? person.name()
-                                                : 'Nameless Person'}
-                                            </span><br />
-
-                                            <span className='display-username text-secondary'>{username}</span>
-                                        </div>
-                                    </Col>
-
-                                </Row>
-                            </Container>
+                            <UserInfo person={person} username={username} />
                             <div className='myprofile-options'>
                                 <Row className='my-options' >
                                     <Col xs={3}>

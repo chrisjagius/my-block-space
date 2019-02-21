@@ -97,15 +97,21 @@ blue/grey #394954 */
 
 .container-desc-prof {
   padding-top: 2em;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
   min-height: 50vh;
   height: auto;
   position: relative;
   overflow: hidden;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
+}
+.background-image {
+  margin: 0;
+  margin-top: -1em;
+  padding: 0;
+  height: 33vh;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 .settings {
   text-align: left;
@@ -140,6 +146,8 @@ blue/grey #394954 */
 .bio-left {
   max-height: 20vh;
   max-width: 11em;
+  min-height: 20vh;
+  min-width: 11em;
   border: solid 4px #f9f9f9f8;
   border-radius: 10%;
   overflow: hidden;
@@ -151,6 +159,8 @@ blue/grey #394954 */
 .avatar {
   max-width: 100%;
   max-height: 100%;
+  min-height: 20vh;
+  min-width: 11em;
 }
 
 .bio-right {
