@@ -70,7 +70,7 @@ export default class Profile extends Component {
     addFriend = (event) => {
         event.preventDefault();
         let friends = this.props.friends
-        friends.unshift(this.state.username)
+        friends.push(this.state.username)
         const options = { encrypt: false }
         putFile('friends.json', JSON.stringify(friends), options)
             .then((result) => {

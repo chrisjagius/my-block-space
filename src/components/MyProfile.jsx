@@ -141,16 +141,6 @@ export default class MyProfile extends Component {
         this.fetchData();
     }
 
-    handleChangeSettings = (e) => {
-        const { name, value } = e.target;
-        this.setState((prevState) => ({
-            settings: {
-                ...prevState.settings,
-                [name]: value
-            }
-        }));
-    }
-
     logUserInfo = () => {
         console.log(loadUserData());
     }
@@ -236,32 +226,34 @@ export default class MyProfile extends Component {
                 </div>);
         return (
             <div>
-            {!isSignInPending() && person &&
+            {person &&
                 <div className="container-myprofile">
                     <div style={backgroundStyle} className='container-desc-prof'>
                     <Container>
-                        <Row className="myprofile-bio">
-
-                            <Col xs={12} md={3} className='bio-left'>
-                                <img
-                                    src={person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage}
-                                    className="img-rounded avatar"
-                                    alt=''
-                                    id="avatar-image"
-                                />
+                        <Row >
+                                <Col xs={12} md={3} className="myprofile-bio-wrap">
+                                <div className="myprofile-bio">
+                                <div className='bio-left'>
+                                    <img
+                                        src={person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage}
+                                        className="avatar"
+                                        alt='Avatar'
+                                    />
+                                </div>
+                                <span className="heading-name">{person.name() ? person.name()
+                                        : 'Nameless Person'}
+                                </span><br/>
+                                
+                                <span className='display-username text-secondary'>{username}</span>
+                                </div>
                             </Col>
-                            <Col xs={12} md={9} className='bio-right'>
-                                <h1>
-                                    <span id="heading-name">{person.name() ? person.name()
-                                        : 'Nameless Person'}</span>
-                                </h1>
-                            </Col>
+                            
                         </Row>
                     </Container>
                     <div className='myprofile-options'>
                             <Row className='my-options' >
                                 <Col xs={3}>
-
+                                    
                                 </Col>
                                 <Col xs={1}>
                                     <img src={settingsIcon} 
@@ -297,7 +289,9 @@ export default class MyProfile extends Component {
                     {this.state.displayFriends && friendDisplay}
                     {!this.state.displayFriends && <div className='profile-posts'>
                         <Row>
-                        <Col xs={1} md={2}></Col>
+                        <Col xs={1} md={2}>
+                                
+                        </Col>
                         <Col xs={10} md={8}>
                         {this.isLocal() &&
                             <div>

@@ -67,6 +67,9 @@
 }
 
 /* navbar */
+.navbar-con {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
+}
 .nav-img {
   height: 2em;
   width: 2em;
@@ -98,7 +101,8 @@ blue/grey #394954 */
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  height: 50vh;
+  min-height: 50vh;
+  height: auto;
   position: relative;
   overflow: hidden;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
@@ -107,24 +111,46 @@ blue/grey #394954 */
   text-align: left;
   padding: 1em;
 }
-.myprofile-bio {
+.myprofile-bio-wrap {
   position: absolute;
-  padding-top: 10em;
-  margin-bottom: -2em;
   height: 33vh;
+  bottom: -1em;
   z-index: 2;
   width: auto;
   left: 0;
-  right: 0;
 }
+
+.myprofile-bio {
+  
+}
+
+.heading-name {
+  min-width: 100%;
+  font-size: 1.5em;
+  height: 5em;
+}
+
+.display-username {
+  min-width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 .bio-left {
-  align-content: center;
+  max-height: 20vh;
+  max-width: 11em;
+  border: solid 4px #f9f9f9f8;
+  border-radius: 10%;
+  overflow: hidden;
+  margin: 0 auto;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
+
 }
-.bio-left > img {
-  width: 120px;
-  height: 120px;
-  border: solid 0.7px #f9f9f998;
-  border-radius: 50%;
+
+.avatar {
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .bio-right {
@@ -142,9 +168,11 @@ blue/grey #394954 */
   min-height: 16vh;
   z-index: 1;
   padding-top: 1em;
+
 }
 .my-options {
   text-align: left;
+  z-index: 3;
 }
 hr {
   color: black;
@@ -284,20 +312,20 @@ hr {
 }
 
 
-@media only screen and (max-width: 770px) {
+@media only screen and (max-width: 765px) {
+  
+  .myprofile-bio-wrap {
+    top: 2em;
+    right: 0;
+    bottom: 1em;
+  }
   .myprofile-bio {
-    padding-top: 0;
-    padding-bottom: 0;
-    background-color: f9f9f9;
-  }
-  .bio-left {
-    align-content: center;
-  }
-  .bio-left > img {
-    width: 120px;
-    height: 120px;
-    border: solid 0.7px #f9f9f981;
-    border-radius: 50%; 
+    width: auto;
+    padding: 0.5em;
+    display: inline-block;
+    border-radius: 10%;
+    background-color: rgba(7, 7, 7, 0.5);
+    color:#f3f3f3ff;
   }
 
   .bio-right {
