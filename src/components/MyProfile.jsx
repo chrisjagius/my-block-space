@@ -230,7 +230,7 @@ export default class MyProfile extends Component {
                 <div className="container-myprofile">
                     <div className='container-desc-prof'>
                     <div style={backgroundStyle} className="background-image"></div>
-                        <UserInfo person={person} username={username} />
+                    <UserInfo person={person} username={username} />
                     <div className='myprofile-options'>
                             <Row className='my-options' >
                                 <Col xs={3}>

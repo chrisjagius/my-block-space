@@ -124,6 +124,7 @@ blue/grey #394954 */
   z-index: 2;
   width: auto;
   left: 0;
+  right: 0;
 }
 
 .myprofile-bio {
