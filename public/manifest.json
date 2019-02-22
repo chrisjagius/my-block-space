@@ -12,6 +12,11 @@
   "description": "A social app build with blockstack",
   "icons": [
     {
+      "src": "https://i.postimg.cc/Vr5cp7W6/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
       "src": "images/16.png",
       "sizes": "16x16",
       "type": "image/png"
@@ -19,11 +24,6 @@
     {
       "src": "images/32.png",
       "sizes": "32x32",
-      "type": "image/png"
-    },
-    {
-      "src": "images/192.png",
-      "sizes": "192x192",
       "type": "image/png"
     },
     {
