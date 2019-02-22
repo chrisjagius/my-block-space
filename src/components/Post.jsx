@@ -10,7 +10,8 @@ export default class Post extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            now: Date.now()
+            now: Date.now(),
+            fullText: false
         }
     }
 
@@ -26,13 +27,12 @@ export default class Post extends Component {
             return `${Math.floor(Math.floor((now - time) / (1000 * 60 * 60 * 24)) / 7)} w`
         }
     }
-
-    componentDidMount() {
-
+    showFulltext = () => {
+        this.setState({ fullText: !this.state.fullText})
     }
 
-    componentWillReceiveProps() {
-
+    componentDidMount() {
+        
     }
 
     render() {
@@ -40,7 +40,7 @@ export default class Post extends Component {
 
         return (
             <div className="my-post" >
-                <Row className='poster-info'>
+                <Row className='poster-info-con'>
                     <Col xs={2}>
                         <Link className='post-link' to={`/users/${username}`}><img
                             src={person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage}
@@ -62,7 +62,9 @@ export default class Post extends Component {
                     <div className='post-pic-container'>
                         <img alt='' className='post-pic' src={status.image} />
                         <hr /></div>}
-                <pre>{status.text}</pre>
+                {!this.state.fullText && (status.text.length > 500 ? (<pre>{status.text.substring(0, 500)}...<br/><strong className='show-more' onClick={this.showFulltext}>show more</strong></pre>) : <pre>{status.text}</pre>)}
+
+                {this.state.fullText && <pre>{status.text} <br /><strong className='show-more' onClick={this.showFulltext}>show less</strong></pre>}
             </div>
         )
     }

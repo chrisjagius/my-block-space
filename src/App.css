@@ -199,20 +199,40 @@ hr {
 .my-post {
   height: auto;
   background-color: #f9f9f9;
-  margin-bottom: 1em;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.308), 0 6px 20px 0 rgba(0, 0, 0, 0.308);
   position: relative;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.527)
 }
 .my-post > hr {
   margin: 0;
   padding: 0;
+}
+.my-post > pre {
+  text-align: left;
+  padding: 1em;
+  margin: 0;
+  white-space: pre-wrap;       /* Since CSS 2.1 */
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  word-wrap: break-word;
+}
+.poster-info {
+  padding-top: 1.5em;
+}
+.poster-info-con {
+  text-align: left;
+  margin: 0.5em;
+}
+.show-more:hover {
+  cursor: pointer;
 }
 
 .profile-posts {
   min-height: 80vh;
   background-color: #f9f9f9;
   padding-top: 1em;
+  padding-bottom: 2em;
 }
 .post-img {
   border-radius: 50%;
@@ -220,11 +240,7 @@ hr {
   height: 3em;
   margin-top: 1em;
 }
-.poster-info {
-  margin-top: 1.5em;
-}
 .post-date {
-  margin-top: 2em;
   font-size: 15px;
 }
 .post-pic-container {

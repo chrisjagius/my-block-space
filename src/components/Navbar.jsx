@@ -23,7 +23,8 @@ class Navigationbar extends Component {
     
     handleKeyPress = (e) => {
         e.preventDefault();
-        this.props.searchFor(this.state.searchUser);
+        const user = this.state.searchUser.trim();
+        this.props.searchFor(user);
     }
 
     handleChange = (event) => {

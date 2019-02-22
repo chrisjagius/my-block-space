@@ -46,12 +46,11 @@ export default class Feed extends Component {
                 .catch((error) => {
                     console.log('fail')
                 })
-                .finally(async () => {
+                .finally(() => {
                     if (username === friends[friends.length - 1]) {
-                        let result = await this.mergeSort(keyCreatedAt)
                         this.setState({ 
                             allPosts: unsortedPosts, 
-                            order: result, 
+                            order: this.mergeSort(keyCreatedAt), 
                             isLoading: false,
                             noFriends: false
                         })
@@ -95,9 +94,7 @@ export default class Feed extends Component {
     componentDidMount() {
         this.fetchPostsFromFriends()
     }
-    componentWillReceiveProps() {
-        this.fetchPostsFromFriends()
-    }
+    
 
     render() {
         
@@ -105,14 +102,14 @@ export default class Feed extends Component {
         return (
             <div className='feed-container'>
                 <Row>
-                    <Col xs={1} md={2}></Col>
-                    <Col xs={10} md={8}>
+                    <Col md={1} xl={2}></Col>
+                    <Col sm={12} md={10} xl={8}>
                         {this.state.isLoading && <Loader />}
                         {this.state.noFriends && !this.state.isLoading && <h1>Oepsie, you have no frinds yet</h1>}
                         {!this.state.noFriends && !this.state.isLoading && 
                         <InfiniteScroll array={false} order={this.state.order} allPosts={this.state.allPosts} />}
                     </Col>
-                    <Col xs={1} md={2}></Col>
+                    <Col md={1} xl={2}></Col>
                 </Row>
             </div>
         )

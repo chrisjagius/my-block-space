@@ -33,7 +33,8 @@ export default class Profile extends Component {
     }
 
     fetchData() {
-        const username = this.props.match.params.username
+        const username = this.props.match.params.username.indexOf('.id.blockstack') > -1 ? this.props.match.params.username : this.props.match.params.username + '.id.blockstack';
+
         this.setState({ isLoading: true, username: username })
         
         this.setState({  })
