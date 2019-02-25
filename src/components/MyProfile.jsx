@@ -73,6 +73,9 @@ export default class MyProfile extends Component {
         .catch(() => {
             console.log('oepsie, could not fetch data')
         })
+        .finally(() => {
+            this.setState({isLoading: false});
+        })
 
         getFile('settings.json', options)
         .then((file) => {
@@ -99,7 +102,6 @@ export default class MyProfile extends Component {
         }
 
         postIds.unshift(createdAt);
-        posts.unshift(post)
         const options = { encrypt: false }
         putFile(`post${createdAt}.json`, JSON.stringify(post), options)
         .then(() => {
@@ -109,6 +111,7 @@ export default class MyProfile extends Component {
                     postIds: postIds,
                     posts: posts
                 })
+                this.fetchData()
             })
             .catch(() => {
                 console.log('something went wrong with saving your post id')
