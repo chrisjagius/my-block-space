@@ -270,10 +270,10 @@ export default class MyProfile extends Component {
                     {this.state.displayFriends && friendDisplay}
                     {!this.state.displayFriends && <div className='profile-posts'>
                         <Row>
-                        <Col xs={1} md={2}>
+                        <Col xs={1} md={1} xl={2}>
                                 
                         </Col>
-                        <Col xs={10} md={8}>
+                        <Col sm={12} md={10} xl={8}>
                         {this.isLocal() &&
                             <div>
                                 {this.state.changeInfo && settingsForm }
@@ -299,12 +299,13 @@ export default class MyProfile extends Component {
                                 </Row>
                                 
                                 <Row>
-                                <Col md={6} className='input-btn-wrapper'>
+                                <Col xs={2} className='input-btn-wrapper'>
                                     <label className="btn btn-outline-secondary">
                                         <img alt='' src={cameraIcon} /> <input type="file" onChange={this.captureFile} hidden/>
                                     </label>
                                 </Col>
-                                            <Col md={4} className="text-right input-btn-wrapper">
+                                <Col xs={8}></Col>
+                                <Col xs={2} className=" input-btn-wrapper">
                                             <Button variant="outline-success"
                                         className=""
                                         onClick={e => this.handleNewStatusSubmit(e)}
@@ -316,18 +317,18 @@ export default class MyProfile extends Component {
                             </div>
                             </div>
                         }</Col>
-                        <Col xs={1} md={2}></Col>
+                        <Col xs={1} md={1}></Col>
                         </Row>
                         <Row>
-                        <Col xs={1} md={2}></Col>
-                        <Col xs={10} md={8}>
+                        <Col xs={1} md={1} xl={2}></Col>
+                            <Col sm={12} md={10} xl={8}>
                                 {this.state.isLoading && <Loader/>}
                                 {this.state.statuses.map((status) => (
                                     <Post person={person} username={username} status={status} key={status.created_at} />
                                 )
                                 )}
                         </Col>
-                        <Col xs={1} md={2}></Col>
+                        <Col xs={1} md={1}></Col>
                         </Row>
                     </div>}
                 </div>}

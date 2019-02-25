@@ -162,15 +162,15 @@ export default class Profile extends Component {
                         </div>
                         <div className='profile-posts'>
                             <Row>
-                                <Col xs={1} md={2}></Col>
-                                <Col xs={10} md={8}>
+                                <Col xs={1} md={1}></Col>
+                                <Col sm={12} md={10} xl={8}>
                                     {this.state.isLoading && <span>Loading...</span>}
                                     {this.state.statuses.map((status) => (
                                         <Post person={person} username={username} status={status} key={status.created_at} />
                                     )
                                     )}
                                 </Col>
-                                <Col xs={1} md={2}></Col>
+                                <Col xs={1} md={1}></Col>
                             </Row>
                         </div>
                     </div> : <NoResult username={username}/>}
