@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import {
-    isSignInPending,
     loadUserData,
     getFile,
     putFile,
 
 } from 'blockstack';
-import { Container, Row, Col, ListGroup, Button, Form, InputGroup, FormControl } from 'react-bootstrap';
+import { Row, Col, ListGroup, Button, Form, InputGroup, FormControl } from 'react-bootstrap';
 import backPic from '../assets/standard-wallpaper.jpg';
 import settingsIcon from '../assets/settings.svg';
 import cameraIcon from '../assets/camera.svg';
@@ -14,6 +13,7 @@ import usersIcon from '../assets/users.svg';
 import Post from './Post';
 import Loader from './Loader';
 import UserInfo from './UserInfo';
+import InfiniteScroll from './InfiniteScroll';
 
 
 export default class MyProfile extends Component {
@@ -22,8 +22,6 @@ export default class MyProfile extends Component {
         this.state = {
             checked: false,
             newStatus: "",
-            statuses: [],
-            statusIndex: 0,
             isLoading: false,
             changeInfo: false,
             newImage: false,
@@ -33,7 +31,9 @@ export default class MyProfile extends Component {
                 bio: false,
                 displayName: false
             },
-            displayFriends: false
+            displayFriends: false,
+            posts: {},
+            postIds: []
         };
         this.handleNewStatusChange = this.handleNewStatusChange.bind(this);
         this.handleNewStatusSubmit = this.handleNewStatusSubmit.bind(this);
@@ -48,13 +48,30 @@ export default class MyProfile extends Component {
     fetchData() {
         this.setState({ isLoading: true })
         const options = { decrypt: false }
-        getFile('statuses.json', options)
+        getFile('postids.json', options)
         .then((file) => {
-            let statuses = JSON.parse(file || '[]')
-            this.setState({
-                statusIndex: statuses.length,
-                statuses: statuses
-            })
+            let postIds = JSON.parse(file || '[]')
+            let posts = {}
+            if (postIds.length > 0) {
+                postIds.forEach((id, index) => {
+                    getFile(`post${id}.json`, options)
+                    .then((file) => {
+                        let post = JSON.parse(file)
+                        posts[id] = <Post person={this.props.person} username={this.props.username} status={post} key={post.created_at} />;
+                        setTimeout(() => { if (index === postIds.length -1) {
+                            this.setState({
+                                postIds: postIds,
+                                posts: posts,
+                                isLoading: false
+                            })
+                        }
+                        }, 300)
+                    })         
+                })
+            } 
+        })
+        .catch(() => {
+            console.log('oepsie, could not fetch data')
         })
 
         getFile('settings.json', options)
@@ -64,32 +81,42 @@ export default class MyProfile extends Component {
                 settings: settings ? settings : this.state.settings
             })
         })
-        .finally(() => {
-            this.setState({ isLoading: false })
-        })
     }
 
     saveNewStatus() {
-        let statuses = this.state.statuses;
-        let idNumber = this.state.statusIndex;
+        let postIds = this.state.postIds;
+        let posts = this.state.posts;
         let text = this.state.newStatus.trim();
         if (text.length === 0) {return false};
+        let createdAt = Date.now();
+        let idNumber = postIds.length
 
-        let status = {
+        let post = {
             id: idNumber++,
             text: text,
-            created_at: Date.now(),
+            created_at: createdAt,
             image: this.state.newImage
         }
 
-        statuses.unshift(status)
+        postIds.unshift(createdAt);
+        posts.unshift(post)
         const options = { encrypt: false }
-        putFile('statuses.json', JSON.stringify(statuses), options)
+        putFile(`post${createdAt}.json`, JSON.stringify(post), options)
+        .then(() => {
+            putFile('postids.json', JSON.stringify(postIds), options)
             .then(() => {
                 this.setState({
-                    statuses: statuses
+                    postIds: postIds,
+                    posts: posts
                 })
             })
+            .catch(() => {
+                console.log('something went wrong with saving your post id')
+            })
+        })
+        .catch(() => {
+            console.log('something went wrong with saving your post')
+        })
     }
 
     handleNewStatusChange(event) {
@@ -323,10 +350,7 @@ export default class MyProfile extends Component {
                         <Col xs={1} md={1} xl={2}></Col>
                             <Col sm={12} md={10} xl={8}>
                                 {this.state.isLoading && <Loader/>}
-                                {this.state.statuses.map((status) => (
-                                    <Post person={person} username={username} status={status} key={status.created_at} />
-                                )
-                                )}
+                                {!this.state.isLoading && <InfiniteScroll array={false} order={this.state.postIds} allPosts={this.state.posts} />}
                         </Col>
                         <Col xs={1} md={1}></Col>
                         </Row>

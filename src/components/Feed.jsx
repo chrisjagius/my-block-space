@@ -4,6 +4,7 @@ import Post from './Post';
 import Loader from './Loader';
 import { Row, Col } from 'react-bootstrap';
 import InfiniteScroll from './InfiniteScroll';
+import { mergeSort } from '../utils/reverseMergeSort.js';
 
 export default class Feed extends Component {
     constructor(props) {
@@ -22,7 +23,7 @@ export default class Feed extends Component {
         if (friends.length === 0) { return this.setState({ noFriends: true, isLoading: false})}
         let unsortedPosts = {};
         let keyCreatedAt = []
-        friends.forEach(async (username) => {
+        friends.forEach(async (username, index) => {
             let person = await lookupProfile(username)
                 .then((profile) => {
                     return new Person(profile)
@@ -32,63 +33,50 @@ export default class Feed extends Component {
                 })
 
             const options = { username: username, decrypt: false }
-            getFile('statuses.json', options)
-                .then((file) => {
-                    var statuses = JSON.parse(file || '[]')
-                    if (statuses.length > 0) {
-                        statuses.forEach((status) => {
-                            const time = status.created_at
-                            keyCreatedAt.push(time)
-                            unsortedPosts[time] = <Post person={person} username={username} status={status} key={time}/>
-                        })
-                    }
-                })
-                .catch((error) => {
-                    console.log('fail')
-                })
-                .finally(() => {
-                    if (username === friends[friends.length - 1]) {
-                        this.setState({ 
-                            allPosts: unsortedPosts, 
-                            order: this.mergeSort(keyCreatedAt), 
-                            isLoading: false,
-                            noFriends: false
-                        })
-                    }
-                })
+            // getFile('statuses.json', options)
+            //     .then((file) => {
+            //         var statuses = JSON.parse(file || '[]')
+            //         if (statuses.length > 0) {
+            //             statuses.forEach((status) => {
+            //                 const time = status.created_at
+            //                 keyCreatedAt.push(time)
+            //                 unsortedPosts[time] = <Post person={person} username={username} status={status} key={time}/>
+            //             })
+            //         }
+            //     })
+
+            getFile('postids.json', options)
+            .then((file) => {
+                let postIds = JSON.parse(file || '[]')
+                if (postIds.length > 0) {
+                    postIds.forEach((id, indexTwo) => {
+                        getFile(`post${id}.json`, options)
+                            .then((file) => {
+                                let post = JSON.parse(file)
+                                keyCreatedAt.push(id)
+                                unsortedPosts[id] = <Post person={person} username={username} status={post} key={post.created_at} />
+                                
+                            })
+                    })
+                }
+            })
+            .catch((error) => {
+                console.log('fail')
+            })
+            .finally(() => {
+                console.log(unsortedPosts)
+                setTimeout(() => { if (index === friends.length - 1) {
+                    this.setState({
+                        allPosts: unsortedPosts,
+                        order: mergeSort(keyCreatedAt),
+                        isLoading: false,
+                        noFriends: false
+                    })
+                }
+                }, 1000)
+            })
+            
         })
-    }
-    mergeSort = (array) => {
-        if (array.length === 1) {
-            return array
-        }
-        // Split Array in into right and left
-        const length = array.length;
-        const middle = Math.floor(length / 2)
-        const left = array.slice(0, middle)
-        const right = array.slice(middle)
-
-        return this.merge(
-            this.mergeSort(left),
-            this.mergeSort(right)
-        )
-    }
-
-    merge = (left, right) => {
-        const result = [];
-        let leftIndex = 0;
-        let rightIndex = 0;
-        while (leftIndex < left.length &&
-            rightIndex < right.length) {
-            if (left[leftIndex] > right[rightIndex]) {
-                result.push(left[leftIndex]);
-                leftIndex++;
-            } else {
-                result.push(right[rightIndex]);
-                rightIndex++
-            }
-        }
-        return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
     }
 
     componentDidMount() {

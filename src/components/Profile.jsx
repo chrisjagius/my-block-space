@@ -12,6 +12,8 @@ import NoResult from './NoResult';
 import Post from './Post';
 import Loader from './Loader';
 import UserInfo from './UserInfo';
+import { mergeSort } from '../utils/reverseMergeSort.js';
+import InfiniteScroll from './InfiniteScroll';
 
 export default class Profile extends Component {
     constructor(props) {
@@ -24,6 +26,8 @@ export default class Profile extends Component {
             statusIndex: 0,
             isLoading: true,
             following: false,
+            postIds: [],
+            posts: []
         };
         this.fetchData = this.fetchData.bind(this);
     }
@@ -62,9 +66,36 @@ export default class Profile extends Component {
             .catch((error) => {
                 this.setState({ person: undefined })
             })
-            .finally(() => {
-                this.setState({ isLoading: false })
-            })
+
+        getFile('postids.json', options)
+        .then((file) => {
+            let postIds = JSON.parse(file || '[]')
+            let posts = {}
+            if (postIds.length > 0) {
+                postIds.forEach((id, index) => {
+                    getFile(`post${id}.json`, options)
+                        .then((file) => {
+                            let post = JSON.parse(file)
+                            posts[id] = <Post person={this.state.person} username={username} status={post} key={post.created_at} />;
+                            setTimeout(() => {
+                                if (index === postIds.length - 1) {
+                                    this.setState({
+                                        postIds: postIds,
+                                        posts: posts,
+                                        isLoading: false
+                                    })
+                                }
+                            }, 300); 
+                        })
+                })
+            }
+        })
+        .catch(() => {
+            console.log('oepsie, could not fetch data')
+        })
+        .finally(() => {
+            this.setState({ isLoading: false })
+        })
         this.props.friends.includes(username) ? this.setState({ following: true }) : this.setState({ following: false });
     }
     addFriend = (event) => {
@@ -124,7 +155,7 @@ export default class Profile extends Component {
 
                                     </Col>
                                     <Col xs={2}>
-                                        <p className='text-secondary'>Posts: {this.state.statuses.length}</p>
+                                        <p className='text-secondary'>Posts: {this.state.postIds.length}</p>
                                     </Col>
                                     <Col xs={2}>
                                         {!this.state.following ? <Button variant="outline-success"
@@ -162,13 +193,10 @@ export default class Profile extends Component {
                         </div>
                         <div className='profile-posts'>
                             <Row>
-                                <Col xs={1} md={1}></Col>
+                                <Col xs={1} md={1} xl={2}></Col>
                                 <Col sm={12} md={10} xl={8}>
                                     {this.state.isLoading && <span>Loading...</span>}
-                                    {this.state.statuses.map((status) => (
-                                        <Post person={person} username={username} status={status} key={status.created_at} />
-                                    )
-                                    )}
+                                    {!this.state.isLoading && <InfiniteScroll array={false} order={this.state.postIds} allPosts={this.state.posts} />}
                                 </Col>
                                 <Col xs={1} md={1}></Col>
                             </Row>
