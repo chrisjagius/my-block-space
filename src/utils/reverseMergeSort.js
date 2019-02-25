@@ -1,5 +1,5 @@
 export const mergeSort = (array) => {
-    if (array.length === 1) {
+    if (array.length === 1 || array.length === 0) {
         return array
     }
     // Split Array in into right and left

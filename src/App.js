@@ -75,6 +75,7 @@ export default class App extends Component {
     getFile('friends.json', options)
       .then((file) => {
         let friends = JSON.parse(file || '[]')
+        friends.push(this.state.username)
         this.setState({
           friends: friends
         })

@@ -33,17 +33,6 @@ export default class Feed extends Component {
                 })
 
             const options = { username: username, decrypt: false }
-            // getFile('statuses.json', options)
-            //     .then((file) => {
-            //         var statuses = JSON.parse(file || '[]')
-            //         if (statuses.length > 0) {
-            //             statuses.forEach((status) => {
-            //                 const time = status.created_at
-            //                 keyCreatedAt.push(time)
-            //                 unsortedPosts[time] = <Post person={person} username={username} status={status} key={time}/>
-            //             })
-            //         }
-            //     })
 
             getFile('postids.json', options)
             .then((file) => {
@@ -64,7 +53,6 @@ export default class Feed extends Component {
                 console.log('fail')
             })
             .finally(() => {
-                console.log(unsortedPosts)
                 setTimeout(() => { if (index === friends.length - 1) {
                     this.setState({
                         allPosts: unsortedPosts,
