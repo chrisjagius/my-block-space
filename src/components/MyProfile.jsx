@@ -102,7 +102,7 @@ export default class MyProfile extends Component {
         }
 
         postIds.unshift(createdAt);
-        const options = { encrypt: false }
+        const options = {encrypt: false }
         putFile(`post${createdAt}.json`, JSON.stringify(post), options)
         .then(() => {
             putFile('postids.json', JSON.stringify(postIds), options)

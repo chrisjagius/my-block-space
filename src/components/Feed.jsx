@@ -13,14 +13,13 @@ export default class Feed extends Component {
             allPosts: [],
             isLoading: false,
             order: [],
-            noFriends: false
+            noPosts: false
         }
     }
 
     fetchPostsFromFriends = () => {
         this.setState({isLoading: true})
         const { friends } = this.props;
-        if (friends.length === 0) { return this.setState({ noFriends: true, isLoading: false})}
         let unsortedPosts = {};
         let keyCreatedAt = []
         friends.forEach(async (username, index) => {
@@ -58,7 +57,7 @@ export default class Feed extends Component {
                         allPosts: unsortedPosts,
                         order: mergeSort(keyCreatedAt),
                         isLoading: false,
-                        noFriends: false
+                        noPosts: unsortedPosts.length === 0 ? true : false
                     })
                 }
                 }, 1000)
@@ -81,8 +80,8 @@ export default class Feed extends Component {
                     <Col md={1} xl={2}></Col>
                     <Col sm={12} md={10} xl={8}>
                         {this.state.isLoading && <Loader />}
-                        {this.state.noFriends && !this.state.isLoading && <h1>Oepsie, you have no frinds yet</h1>}
-                        {!this.state.noFriends && !this.state.isLoading && 
+                        {this.state.noPosts && !this.state.isLoading && <h1>Oepsie, you have no posts in your timeline yet</h1>}
+                        {!this.state.noPosts && !this.state.isLoading && 
                         <InfiniteScroll array={false} order={this.state.order} allPosts={this.state.allPosts} />}
                     </Col>
                     <Col md={1} xl={2}></Col>
