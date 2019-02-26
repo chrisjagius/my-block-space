@@ -334,8 +334,8 @@ export default class MyProfile extends Component {
                                         <img alt='' src={cameraIcon} /> <input type="file" onChange={this.captureFile} hidden/>
                                     </label>
                                 </Col>
-                                <Col xs={8}></Col>
-                                <Col xs={2} className=" input-btn-wrapper">
+                                <Col xs={6}></Col>
+                                <Col xs={4} className=" input-btn-wrapper">
                                             <Button variant="outline-success"
                                         className=""
                                         onClick={e => this.handleNewStatusSubmit(e)}

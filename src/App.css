@@ -240,7 +240,8 @@ blue/grey #394954 */
 }
 .myprofile-bio-wrap {
   position: absolute;
-  height: 33vh;
+  min-height: 33vh;
+  height: auto;
   bottom: -1em;
   z-index: 2;
   width: auto;
@@ -471,7 +472,7 @@ hr {
       max-width: 98%;
   }
 }
-@media only screen and (max-width: 765px) {
+@media only screen and (max-width: 768px) {
   .flip-card {
     max-width: 18em;
   }
@@ -479,6 +480,7 @@ hr {
     top: 2em;
     right: 0;
     bottom: 1em;
+    margin-bottom: 2em;
   }
   .myprofile-bio {
     width: auto;
