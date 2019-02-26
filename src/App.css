@@ -386,7 +386,7 @@ hr {
 }
 .post-pic {
   max-width: 100%;
-  max-height: 100%;
+  max-height: 50vh;
 }
 .delete-img {
   position: absolute;
