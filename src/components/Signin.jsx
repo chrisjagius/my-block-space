@@ -18,6 +18,7 @@ export default class Signin extends Component {
                     <img className='landing-logo' src={logo} alt='logo' />
                 </div>
                 <h1>The Decentralized Social Network</h1>
+                <p>Create, Follow, and Share. You always decide with who. </p>
                 </div>
                 <div className='landing-square-container'>
                     <div className='square-container'>
