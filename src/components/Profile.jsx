@@ -6,13 +6,11 @@ import {
     lookupProfile,
     putFile
 } from 'blockstack';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Row, Col, Button } from 'react-bootstrap';
 import backPic from '../assets/standard-wallpaper.jpg';
 import NoResult from './NoResult';
-import Post from './Post';
 import Loader from './Loader';
 import UserInfo from './UserInfo';
-import { mergeSort } from '../utils/reverseMergeSort.js';
 import InfiniteScroll from './InfiniteScroll';
 
 export default class Profile extends Component {
@@ -27,7 +25,8 @@ export default class Profile extends Component {
             isLoading: true,
             following: false,
             postIds: [],
-            posts: []
+            posts: [],
+            postIdAndName: {}
         };
         this.fetchData = this.fetchData.bind(this);
     }
@@ -38,10 +37,7 @@ export default class Profile extends Component {
 
     fetchData() {
         const username = this.props.match.params.username.indexOf('.id.blockstack') > -1 ? this.props.match.params.username : this.props.match.params.username + '.id.blockstack';
-
         this.setState({ isLoading: true, username: username })
-        
-        this.setState({  })
         lookupProfile(username)
             .then((profile) => {
                 this.setState({
@@ -55,46 +51,26 @@ export default class Profile extends Component {
             })
 
         const options = { username: username, decrypt: false }
-        getFile('statuses.json', options)
-            .then((file) => {
-                var statuses = JSON.parse(file || '[]')
-                this.setState({
-                    statusIndex: statuses.length,
-                    statuses: statuses
-                })
-            })
-            .catch((error) => {
-                this.setState({ person: undefined })
-            })
-
+        let postIds;
+        let postIdAndName = {}
         getFile('postids.json', options)
         .then((file) => {
-            let postIds = JSON.parse(file || '[]')
-            let posts = {}
+            postIds = JSON.parse(file || '[]')
             if (postIds.length > 0) {
-                postIds.forEach((id, index) => {
-                    getFile(`post${id}.json`, options)
-                        .then((file) => {
-                            let post = JSON.parse(file)
-                            posts[id] = <Post person={this.state.person} username={username} status={post} key={post.created_at} />;
-                            setTimeout(() => {
-                                if (index === postIds.length - 1) {
-                                    this.setState({
-                                        postIds: postIds,
-                                        posts: posts,
-                                        isLoading: false
-                                    })
-                                }
-                            }, 300); 
-                        })
-                })
+                for (let i = 0; i < postIds.length; i++) {
+                    postIdAndName[`${postIds[i]}`] = username;
+                }
             }
         })
         .catch(() => {
             console.log('oepsie, could not fetch data')
         })
         .finally(() => {
-            this.setState({ isLoading: false })
+            this.setState({
+                isLoading: false,
+                postIds: postIds,
+                postIdAndName: postIdAndName
+            });
         })
         this.props.friends.includes(username) ? this.setState({ following: true }) : this.setState({ following: false });
     }
@@ -196,7 +172,9 @@ export default class Profile extends Component {
                                 <Col xs={1} md={1} xl={2}></Col>
                                 <Col sm={12} md={10} xl={8}>
                                     {this.state.isLoading && <span>Loading...</span>}
-                                    {!this.state.isLoading && <InfiniteScroll array={false} order={this.state.postIds} allPosts={this.state.posts} />}
+                                    {!this.state.isLoading && this.state.postIds.length > 0 && <InfiniteScroll array={false} order={this.state.postIds} postIdAndName={this.state.postIdAndName} person={person} username={username} />
+                                    }
+                                    {this.state.postIds.length === 0 && <h1>This user has no posts yet.</h1>}
                                 </Col>
                                 <Col xs={1} md={1}></Col>
                             </Row>

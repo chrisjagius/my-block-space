@@ -82,7 +82,9 @@ export default class Feed extends Component {
                         {this.state.isLoading && <Loader />}
                         {this.state.noPosts && !this.state.isLoading && <h1>Oepsie, you have no posts in your timeline yet</h1>}
                         {!this.state.noPosts && !this.state.isLoading && 
-                        <InfiniteScroll array={false} order={this.state.order} allPosts={this.state.allPosts} />}
+                        <InfiniteScroll array={true} order={this.state.order} allPosts={this.state.allPosts} />
+                        
+                        }
                     </Col>
                     <Col md={1} xl={2}></Col>
                 </Row>

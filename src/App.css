@@ -1,6 +1,8 @@
 .App {
   text-align: center;
   font-family: 'Heebo', sans-serif;
+  min-height: 100vh;
+  background-color: #f9f9f9;
 }
 
 .logo-nav {
@@ -233,6 +235,7 @@ blue/grey #394954 */
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
+  z-index: 0;
 }
 .settings {
   text-align: left;
@@ -358,7 +361,7 @@ hr {
 }
 
 .profile-posts {
-  min-height: 80vh;
+  min-height: 100%;
   background-color: #f9f9f9;
   padding-top: 1em;
   padding-bottom: 2em;
@@ -449,6 +452,16 @@ hr {
   animation: spin 2s linear infinite;
   z-index: 2;
 }
+.feed-loader {
+  position: relative;
+  margin: 1em auto;
+  width: 60px;
+  height: 60px;
+  animation: spin 2s linear infinite;
+  border: 8px solid #f3f3f3; 
+  border-top: 8px solid #868e96;
+  border-radius: 50%;
+}
 
 .feed-container {
   background-color: #f3f3f3;
@@ -477,10 +490,17 @@ hr {
     max-width: 18em;
   }
   .myprofile-bio-wrap {
-    top: 2em;
+    top: 4em;
     right: 0;
-    bottom: 1em;
-    margin-bottom: 2em;
+  }
+  .container-desc-prof {
+    height: auto;
+  }
+  .background-image {
+    height: 70vh;
+  }
+  .bio-left {
+    max-height: 28vh;
   }
   .myprofile-bio {
     width: auto;
@@ -490,6 +510,9 @@ hr {
     background-color: rgba(7, 7, 7, 0.5);
     color:#f3f3f3ff;
   }
+  .myprofile-options {
+  z-index: 3;
+}
 
   .bio-right {
     text-align: center;

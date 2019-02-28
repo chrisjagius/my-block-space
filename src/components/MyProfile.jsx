@@ -10,8 +10,6 @@ import backPic from '../assets/standard-wallpaper.jpg';
 import settingsIcon from '../assets/settings.svg';
 import cameraIcon from '../assets/camera.svg';
 import usersIcon from '../assets/users.svg';
-import Post from './Post';
-import Loader from './Loader';
 import UserInfo from './UserInfo';
 import InfiniteScroll from './InfiniteScroll';
 
@@ -22,7 +20,7 @@ export default class MyProfile extends Component {
         this.state = {
             checked: false,
             newStatus: "",
-            isLoading: false,
+            isLoading: true,
             changeInfo: false,
             newImage: false,
             settings: {
@@ -33,57 +31,54 @@ export default class MyProfile extends Component {
             },
             displayFriends: false,
             posts: {},
-            postIds: []
+            postIds: [],
+            postIdAndName: {}
         };
         this.handleNewStatusChange = this.handleNewStatusChange.bind(this);
         this.handleNewStatusSubmit = this.handleNewStatusSubmit.bind(this);
         this.saveNewStatus = this.saveNewStatus.bind(this);
-        this.fetchData = this.fetchData.bind(this);
     }
 
     isLocal = () => {
         return this.props.match.params.username === loadUserData().username ? true : false;
     }
 
-    fetchData() {
-        this.setState({ isLoading: true })
+    fetchData = () => {
+        let postIds;
+        let postIdAndName = {}
         const options = { decrypt: false }
+        let settings;
         getFile('postids.json', options)
         .then((file) => {
-            let postIds = JSON.parse(file || '[]')
-            let posts = {}
+            postIds = JSON.parse(file || '[]')
             if (postIds.length > 0) {
-                postIds.forEach((id, index) => {
-                    getFile(`post${id}.json`, options)
-                    .then((file) => {
-                        let post = JSON.parse(file)
-                        posts[id] = <Post person={this.props.person} username={this.props.username} status={post} key={post.created_at} />;
-                        setTimeout(() => { if (index === postIds.length -1) {
-                            this.setState({
-                                postIds: postIds,
-                                posts: posts,
-                                isLoading: false
-                            })
-                        }
-                        }, 300)
-                    })         
-                })
-            } 
+                for (let i = 0; i < postIds.length; i++) {
+                    postIdAndName[`${postIds[i]}`] = this.props.username;
+                }
+            }
+        })
+        .then(async()=> {
+            settings = await this.fetchSettings()
         })
         .catch(() => {
             console.log('oepsie, could not fetch data')
         })
         .finally(() => {
-            this.setState({isLoading: false});
-        })
-
-        getFile('settings.json', options)
-        .then((file) => {
-            let settings = JSON.parse(file || false)
             this.setState({
-                settings: settings ? settings : this.state.settings
-            })
+                isLoading: false,
+                postIds: postIds,
+                postIdAndName: postIdAndName,
+                settings: settings
+            });
         })
+    }
+    fetchSettings = () => {
+        const options = { decrypt: false }
+        return getFile('settings.json', options)
+            .then((file) => {
+                let settings = JSON.parse(file || false)
+                return settings ? settings : this.state.settings
+            })
     }
 
     saveNewStatus() {
@@ -352,8 +347,7 @@ export default class MyProfile extends Component {
                         <Row>
                         <Col xs={1} md={1} xl={2}></Col>
                             <Col sm={12} md={10} xl={8}>
-                                {this.state.isLoading && <Loader/>}
-                                {!this.state.isLoading && <InfiniteScroll array={false} order={this.state.postIds} allPosts={this.state.posts} />}
+                                <InfiniteScroll array={false} order={this.state.postIds} allPosts={this.state.posts} postIdAndName={this.state.postIdAndName} person={person} username={username}/>
                         </Col>
                         <Col xs={1} md={1}></Col>
                         </Row>
