@@ -13,13 +13,13 @@ export default class InfiniteScroll extends Component {
         }
     }
 
-    loadMore = () => {
+    loadMore = async () => {
         if (this.props.array) {return false}
         let posts = {...this.state.posts}
         for (let i = this.state.counter; i < this.state.counter + 2; i++) {
             let id = this.props.order[i]
             const options = { username: this.props.postIdAndName[id], decrypt: false }
-            getFile(`post${id}.json`, options)
+            await getFile(`post${id}.json`, options)
                 .then((file) => {
                     let post = JSON.parse(file)
                     return <Post person={this.props.person} username={this.props.username} status={post} key={post.created_at} />
