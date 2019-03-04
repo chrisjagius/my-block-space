@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import {
     loadUserData,
     Person,
@@ -26,13 +27,14 @@ export default class Profile extends Component {
             following: false,
             postIds: [],
             posts: [],
-            postIdAndName: {}
+            postIdAndName: {},
+            isLocal: false
         };
         this.fetchData = this.fetchData.bind(this);
     }
 
     isLocal = () => {
-        return this.props.match.params.username === loadUserData().username ? true : false;
+        this.setState({isLocal: this.props.match.params.username === loadUserData().username ? true : false});
     }
 
     fetchData() {
@@ -101,6 +103,7 @@ export default class Profile extends Component {
     }
 
     componentDidMount() {
+        this.isLocal();
         this.fetchData();
     }
     componentWillReceiveProps() {
@@ -120,6 +123,7 @@ export default class Profile extends Component {
         return (
 
             <div>
+            {this.state.isLocal && <Redirect to={`/${loadUserData().username}`} />}
             {isLoading && <Loader/>}
             {!isLoading && person ?
                     <div className="container-myprofile">
@@ -172,7 +176,7 @@ export default class Profile extends Component {
                                 <Col xs={1} md={1} xl={2}></Col>
                                 <Col sm={12} md={10} xl={8}>
                                     {this.state.isLoading && <span>Loading...</span>}
-                                    {!this.state.isLoading && this.state.postIds.length > 0 && <InfiniteScroll array={false} order={this.state.postIds} postIdAndName={this.state.postIdAndName} person={person} username={username} />
+                                    {!this.state.isLoading && this.state.postIds.length > 0 && <InfiniteScroll array={false} order={this.state.postIds} postIdAndName={this.state.postIdAndName} person={person} username={username} doneLoading={true} />
                                     }
                                     {this.state.postIds.length === 0 && <h1>This user has no posts yet.</h1>}
                                 </Col>

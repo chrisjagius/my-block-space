@@ -347,7 +347,7 @@ export default class MyProfile extends Component {
                         <Row>
                         <Col xs={1} md={1} xl={2}></Col>
                             <Col sm={12} md={10} xl={8}>
-                                <InfiniteScroll array={false} order={this.state.postIds} allPosts={this.state.posts} postIdAndName={this.state.postIdAndName} person={person} username={username}/>
+                                <InfiniteScroll array={false} order={this.state.postIds} allPosts={this.state.posts} postIdAndName={this.state.postIdAndName} person={person} username={username} doneLoading={!this.state.isLoading}/>
                         </Col>
                         <Col xs={1} md={1}></Col>
                         </Row>

@@ -467,6 +467,12 @@ hr {
   background-color: #f3f3f3;
   margin-top: 3.5em;
   min-height: 95vh;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.prog-bar {
+  margin-top: 50vh;
 }
 
 /* Post */

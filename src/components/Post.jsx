@@ -11,7 +11,8 @@ export default class Post extends Component {
         super(props);
         this.state = {
             now: Date.now(),
-            fullText: false
+            fullText: false,
+            person: false
         }
     }
 
