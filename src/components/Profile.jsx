@@ -128,7 +128,8 @@ export default class Profile extends Component {
             {isLoading && <Loader/>}
             {!isLoading && person ?
                     <div className="container-myprofile">
-                        <div style={backgroundStyle} className='container-desc-prof'>
+                        <div className='container-desc-prof'>
+                            <div style={backgroundStyle} className="background-image"></div>
                             <UserInfo person={person} username={username} />
                             <div className='myprofile-options'>
                                 <Row className='my-options' >
@@ -143,12 +144,12 @@ export default class Profile extends Component {
                                             className=""
                                             onClick={this.addFriend}
                                         >
-                                        Follow
+                                            Follow
                                         </Button> : <Button variant="outline-danger"
-                                        className=""
-                                        onClick={this.unFriend}
-                                    >
-                                        Unfollow
+                                                className=""
+                                                onClick={this.unFriend}
+                                            >
+                                                Unfollow
                                         </Button>}
                                     </Col>
                                     <Col xs={5}>
@@ -172,6 +173,7 @@ export default class Profile extends Component {
                             </div>
 
                         </div>
+
                         <div className='profile-posts'>
                             <Row>
                                 <Col xs={1} md={1} xl={2}></Col>
