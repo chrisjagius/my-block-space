@@ -38,8 +38,8 @@ export default class Profile extends Component {
     }
 
     fetchData() {
-        const username = this.props.match.params.username.indexOf('.id.blockstack') > -1 ? this.props.match.params.username : this.props.match.params.username + '.id.blockstack';
-        this.setState({ isLoading: true, username: username })
+        const username = this.props.match.params.username;
+        this.setState({ isLoading: true, username: username, postIds: [] })
         lookupProfile(username)
             .then((profile) => {
                 this.setState({
@@ -53,7 +53,7 @@ export default class Profile extends Component {
             })
 
         const options = { username: username, decrypt: false }
-        let postIds;
+        let postIds = [];
         let postIdAndName = {}
         getFile('postids.json', options)
         .then((file) => {
@@ -68,6 +68,7 @@ export default class Profile extends Component {
             console.log('oepsie, could not fetch data')
         })
         .finally(() => {
+            console.log(postIds)
             this.setState({
                 isLoading: false,
                 postIds: postIds,
@@ -119,7 +120,7 @@ export default class Profile extends Component {
         const backgroundStyle = {
             'backgroundImage': `url("${backPic}"`
         }
-        
+        if (this.props.match.params.username !== username) { this.isLocal();this.fetchData()}
         return (
 
             <div>

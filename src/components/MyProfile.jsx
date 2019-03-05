@@ -104,7 +104,8 @@ export default class MyProfile extends Component {
             .then(() => {
                 this.setState({
                     postIds: postIds,
-                    posts: posts
+                    posts: posts,
+                    isLoading: true
                 })
                 this.fetchData()
             })
@@ -324,12 +325,12 @@ export default class MyProfile extends Component {
                                 </Row>
                                 
                                 <Row>
-                                <Col xs={2} className='input-btn-wrapper'>
+                                <Col xs={3} className='input-btn-wrapper'>
                                     <label className="btn btn-outline-secondary">
                                         <img alt='' src={cameraIcon} /> <input type="file" onChange={this.captureFile} hidden/>
                                     </label>
                                 </Col>
-                                <Col xs={6}></Col>
+                                <Col xs={5}></Col>
                                 <Col xs={4} className=" input-btn-wrapper">
                                             <Button variant="outline-success"
                                         className=""
@@ -347,7 +348,7 @@ export default class MyProfile extends Component {
                         <Row>
                         <Col xs={1} md={1} xl={2}></Col>
                             <Col sm={12} md={10} xl={8}>
-                                <InfiniteScroll array={false} order={this.state.postIds} allPosts={this.state.posts} postIdAndName={this.state.postIdAndName} person={person} username={username} doneLoading={!this.state.isLoading}/>
+                                {!this.state.isLoading && <InfiniteScroll array={false} order={this.state.postIds} allPosts={this.state.posts} postIdAndName={this.state.postIdAndName} person={person} username={username} doneLoading={!this.state.isLoading}/>}
                         </Col>
                         <Col xs={1} md={1}></Col>
                         </Row>

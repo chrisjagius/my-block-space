@@ -3,16 +3,12 @@ import { Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
-
-
-
 export default class Post extends Component {
     constructor(props) {
         super(props);
         this.state = {
             now: Date.now(),
-            fullText: false,
-            person: false
+            fullText: false
         }
     }
 

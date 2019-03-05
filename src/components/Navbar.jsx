@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Navbar, Nav, InputGroup, FormControl, Button } from 'react-bootstrap';
+import { Navbar, Nav, InputGroup, FormControl, Button, Dropdown } from 'react-bootstrap';
 import {signUserOut} from 'blockstack';
 import { Link } from 'react-router-dom';
 import logo from '../assets/3.png';
@@ -12,7 +12,8 @@ class Navigationbar extends Component {
     constructor() {
         super()
         this.state = {
-            searchUser: undefined
+            searchUser: undefined,
+            foundUsers: []
         }
     }
 
@@ -23,8 +24,33 @@ class Navigationbar extends Component {
     
     handleKeyPress = (e) => {
         e.preventDefault();
-        const user = this.state.searchUser.trim();
-        this.props.searchFor(user);
+        if (this.state.searchUser) {
+            const user = this.state.searchUser.trim();
+            this.props.searchFor(user);
+            this.setState({ foundUsers: [], searchUser: undefined })
+        }
+    }
+    fetchPerson = async () => {
+        let url = `https://core.blockstack.org/v1/search?query=${this.state.searchUser}`;
+        let resp = await fetch(url)
+
+        if (resp.statusCode >= 400) {
+            console.warn(`error status from ${url}: ${resp.statusCode}`)
+            this.setState({foundUsers: []})
+        }
+
+        try {
+            const { results } = await resp.json()
+            this.setState({ foundUsers: results })
+            console.log(results)
+        } catch (e) {
+            console.warn(`bad JSON from ${url}`)
+            this.setState({foundUsers: []})
+        }
+    }
+    searchBySugested = (name) => {
+        this.setState({ foundUsers: [], searchUser: undefined })
+        this.props.searchFor(name)
     }
 
     handleChange = (event) => {
@@ -32,6 +58,11 @@ class Navigationbar extends Component {
         this.setState({
             searchUser: event.target.value
         })
+        if (event.target.value) {
+            this.fetchPerson()
+        } else {
+            this.setState({ foundUsers: [], searchUser: undefined })
+        };
     }
 
 
@@ -66,6 +97,9 @@ class Navigationbar extends Component {
                                     <Button variant="outline-secondary" onClick={e => this.handleKeyPress(e)} >Search</Button>
                                 </InputGroup.Append>
                             </InputGroup>
+                            {this.state.searchUser && <Dropdown.Menu className='user-drop-down' show>
+                                {this.state.foundUsers.map((result, index) => { return <Dropdown.Item eventKey={index} active={false} onClick={() => { this.searchBySugested(result.fullyQualifiedName) }}>{result.fullyQualifiedName}</Dropdown.Item> })}
+                            </Dropdown.Menu>}
                         </Nav>
                         <Nav className='justify-content-end"'>
                             <Nav.Link onClick={this.handleSignOut}>

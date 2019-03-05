@@ -204,6 +204,10 @@
   text-decoration: none !important;
 }
 
+.user-drop-down {
+  display: block;
+}
+
 
 /* brown #925C52
 brown/dark #582921
@@ -468,7 +472,7 @@ hr {
   margin-top: 3.5em;
   min-height: 95vh;
   max-width: 100%;
-  overflow: hidden;
+  overflow: scroll;
 }
 
 .prog-bar {
