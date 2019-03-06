@@ -33,19 +33,35 @@ export default class Feed extends Component {
     }
 
     // here I fetch the postids from a username, then call the fetchPostsfromFriends again till counter === friends.length
-    getPostIds = (options, postids, postIdAndName, username) => {
-        getFile('postids.json', options)
-        .then(res => { return JSON.parse(res || '[]')})
-        .then(res => {
+    getPostIds = async(options, postids, postIdAndName, username) => {
+
+        let resp = await getFile('postids.json', options)
+        try {
+            let file = JSON.parse(resp || '[]');
             this.setState({ counter: this.state.counter + 1 })
-            if (res.length > 0) {
-                this.concatPostIds(res, postids)
-                this.connectIdWithName(res, postIdAndName, username)
+            if (file.length > 0) {
+                this.concatPostIds(file, postids)
+                this.connectIdWithName(file, postIdAndName, username)
                 this.fetchPostsFromFriends()
             } else {
                 this.fetchPostsFromFriends()
             }
-        })
+        } catch (e) {
+            console.log(`can't fetch postids. message: ${e}`)
+        }
+
+        // getFile('postids.json', options)
+        // .then(res => { return JSON.parse(res || '[]')})
+        // .then(res => {
+        //     this.setState({ counter: this.state.counter + 1 })
+        //     if (res.length > 0) {
+        //         this.concatPostIds(res, postids)
+        //         this.connectIdWithName(res, postIdAndName, username)
+        //         this.fetchPostsFromFriends()
+        //     } else {
+        //         this.fetchPostsFromFriends()
+        //     }
+        // })
     }
 
     // add post ids to existing array with prev postids

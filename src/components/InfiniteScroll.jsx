@@ -51,7 +51,7 @@ export default class InfiniteScroll extends Component {
                 posts[id] = <Post person={person} username={username} status={post} key={post.created_at} />
                 i++
             } catch {
-                console.log(`Something went wrong with fetshing post ${id}. message: ${file}`)
+                console.log(`Something went wrong with fetching post ${id}. message: ${file}`)
             }
         }
         return this.setState({ posts: posts, counter: i, loadPost: false })
