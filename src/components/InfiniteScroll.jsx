@@ -14,77 +14,47 @@ export default class InfiniteScroll extends Component {
         }
     }
     // Here I fetch the post from the this.props.username - I need the username and postid to do this I get this as postIdAndName I also need an array with ids(aka timestamps) for the order
-    loadMore = () => {
+    loadMore = async () => {
+        console.log(this.props.order)
         let posts = {...this.state.posts}
-        for (let i = this.state.counter; i < this.state.counter + 2; i++) {
+        let i = this.state.counter;
+        while (i < this.state.counter + 3 && i < this.props.order.length) {
             let id = this.props.order[i]
-            const options = { username: this.props.postIdAndName[id], decrypt: false }
-            getFile(`post${id}.json`, options)
-                .then((file) => {
-                    let post = JSON.parse(file)
-                    return <Post person={this.props.person} username={this.props.username} status={post} key={post.created_at} />
-                })
-                .then((post) => {
-                    posts[id] = post;
-                })
-                .then(() => {
-                    if (i === this.state.counter + 1) {
-                        this.setState({
-                            posts: posts,
-                            counter: (i),
-                            loadPost: false
-                        })
-                    }
-                })
-                .catch(() => {
-                    this.setState({
-                        posts: posts,
-                        counter: (i - 1),
-                        loadPost: false
-                    })
-                })
+            let username = this.props.postIdAndName[id]
+            const options = { username: username, decrypt: false }
+            let file = await getFile(`post${id}.json`, options);
+            try {
+                let post = JSON.parse(file)
+                posts[id] = <Post person={this.props.person} username={username} status={post} key={post.created_at} />
+                i++
+            } catch {
+                console.log(`Something went wrong with fetshing post ${id}. message: ${file}`)
+            }
         }
+        return this.setState({ posts: posts, counter: i, loadPost: false })
     }
 
     // Here I fetch the person and post - I need the username and postid to do this I get this as postIdAndName I also need an array with ids(aka timestamps) for the order
-    loadFeed = () => {
-        let posts = { ...this.state.posts }
-        for (let i = this.state.counter; i < this.state.counter + 4; i++) {
-            let id = this.props.order[i]
-            let username = this.props.postIdAndName[id]
-            let person;
+    loadFeed = async () => {
+        console.log('called')
+        let posts = { ...this.state.posts };
+        let i = this.state.counter
+        while (i < this.state.counter + 6 && i < this.props.order.length) {
+            let id = this.props.order[i];
+            let username = this.props.postIdAndName[id];
+            let profile = await lookupProfile(username);
+            let person = await new Person(profile);
             const options = { username: username, decrypt: false }
-            lookupProfile(username)
-            .then((profile) => {
-                person = new Person(profile);
-            })
-            .then(() => {
-                getFile(`post${id}.json`, options)
-                    .then((file) => {
-                        let post = JSON.parse(file)
-                        return <Post person={person} username={username} status={post} key={post.created_at} />
-                    })
-                    .then((post) => {
-                        posts[id] = post;
-                    })
-                    .then(() => {
-                        if (i === this.state.counter + 1) {
-                            this.setState({
-                                posts: posts,
-                                counter: (i),
-                                loadPost: false
-                            })
-                        }
-                    })
-                    .catch(() => {
-                        this.setState({
-                            posts: posts,
-                            counter: (i - 1),
-                            loadPost: false
-                        })
-                    })
-            })
+            let file = await getFile(`post${id}.json`, options)
+            try {
+                let post = JSON.parse(file)
+                posts[id] = <Post person={person} username={username} status={post} key={post.created_at} />
+                i++
+            } catch {
+                console.log(`Something went wrong with fetshing post ${id}. message: ${file}`)
+            }
         }
+        return this.setState({ posts: posts, counter: i, loadPost: false })
     }
 
     // detect if user scrolled to bottom of the page
@@ -95,12 +65,11 @@ export default class InfiniteScroll extends Component {
             var clientHeight = document.documentElement.clientHeight || window.innerHeight;
             var scrolledToBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
             if (scrolledToBottom) {
+                this.setState({ loadPost: true })
                 if (!this.props.array) {
                     this.loadMore()
-                    this.setState({ loadPost: true })
                 } else {
                     this.loadFeed();
-                    this.setState({ loadPost: true })
                 }
             }
         }
@@ -117,12 +86,11 @@ export default class InfiniteScroll extends Component {
     render() {
         // check if props posts are loaded, then trigger first fetch for posts
         if (this.props.doneLoading === true && this.state.counter === 0 && !this.state.first) {
+            this.setState({ loadPost: true, first: true })
             if (this.props.array) {
                 this.loadFeed();
-                this.setState({ loadPost: true, first: true })
             } else {
                 this.loadMore();
-                this.setState({ loadPost: true, first: true })
             }
         }
         

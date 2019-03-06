@@ -3,6 +3,7 @@ import { getFile } from 'blockstack';
 import { Row, Col, ProgressBar } from 'react-bootstrap';
 import InfiniteScroll from './InfiniteScroll';
 import { mergeSort } from '../utils/reverseMergeSort.js';
+import { containsValidProofStatement } from 'blockstack/lib/profiles';
 
 export default class Feed extends Component {
     constructor(props) {
@@ -56,7 +57,7 @@ export default class Feed extends Component {
     connectIdWithName = (postId, postIdAndName, username) => {
         let result = postIdAndName;
         if (postId.length > 0) {
-            // here I will have to push the postid into the postIdAndName object with a loop
+            // here I will have to add the postid into the postIdAndName object with a loop
             for (let i = 0; i < postId.length; i++) {
                 result[`${postId[i]}`] = username;
             }

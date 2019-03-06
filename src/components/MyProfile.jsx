@@ -188,6 +188,9 @@ export default class MyProfile extends Component {
         this.setState({displayFriends: !this.state.displayFriends})
     }
 
+    componentWillUnmount() {
+    }
+
     render() {
         const { person, username } = this.props;
         const backgroundStyle = {
@@ -199,7 +202,7 @@ export default class MyProfile extends Component {
                     <Form>
                         <Form.Group as={Row} controlId="formPlaintextEmail">
                             <Form.Label column sm="12">
-                                To change the display name, image and bio press <a target='_blank' href='https://browser.blockstack.org/profiles' rel="noopener noreferrer" >here</a>.
+                                To change the display name, image or bio press <a target='_blank' href='https://browser.blockstack.org/profiles' rel="noopener noreferrer" >here</a>.
                             </Form.Label>
                         </Form.Group>
 
