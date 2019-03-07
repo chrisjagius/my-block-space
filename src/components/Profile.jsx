@@ -37,70 +37,53 @@ export default class Profile extends Component {
         this.setState({isLocal: this.props.match.params.username === loadUserData().username ? true : false});
     }
 
-    fetchData() {
+    async fetchData() {
         const username = this.props.match.params.username;
         this.setState({ isLoading: true, username: username, postIds: [] })
-        lookupProfile(username)
-            .then((profile) => {
-                this.setState({
-                    person: new Person(profile)
-                })
-            })
-            .catch((error) => {
-                this.setState({
-                    person: false
-                })
-            })
-
+        let profile = await lookupProfile(username)
+        try {
+            this.setState({person: new Person(profile)})
+        } catch {
+            this.setState({person: false})
+        }
         const options = { username: username, decrypt: false }
         let postIds = [];
         let postIdAndName = {}
-        getFile('postids.json', options)
-        .then((file) => {
-            postIds = JSON.parse(file || '[]')
+        let resp = await getFile('postids.json', options);
+        try {
+            postIds = JSON.parse(resp || '[]')
             if (postIds.length > 0) {
                 for (let i = 0; i < postIds.length; i++) {
                     postIdAndName[`${postIds[i]}`] = username;
                 }
             }
-        })
-        .catch(() => {
+        } catch {
             console.log('oepsie, could not fetch data')
-        })
-        .finally(() => {
-            console.log(postIds)
-            this.setState({
-                isLoading: false,
-                postIds: postIds,
-                postIdAndName: postIdAndName
-            });
-        })
+        }
         this.props.friends.includes(username) ? this.setState({ following: true }) : this.setState({ following: false });
+        return this.setState({
+                    isLoading: false,
+                    postIds: postIds,
+                    postIdAndName: postIdAndName
+                });
     }
-    addFriend = (event) => {
+    addFriend = async (event) => {
         event.preventDefault();
         let friends = this.props.friends
         friends.push(this.state.username)
         const options = { encrypt: false }
-        putFile('friends.json', JSON.stringify(friends), options)
-            .then((result) => {
-                console.log('res ,', result)
-                this.setState({ following: true })
-            })
+        await putFile('friends.json', JSON.stringify(friends), options)
         this.setState({following: true})
     }
-    unFriend = (event) => {
+    unFriend = async (event) => {
         event.preventDefault();
         let friends = this.props.friends
         let user = this.state.username
         friends = friends.filter(username => username !== user)
         this.props.updateFriends(friends);
         const options = { encrypt: false }
-        putFile('friends.json', JSON.stringify(friends), options)
-        .then((result) => {
-            console.log('res ,', result)
-            this.setState({ following: false })
-        })
+        await putFile('friends.json', JSON.stringify(friends), options)
+        this.setState({ following: false })
     }
 
     componentDidMount() {
