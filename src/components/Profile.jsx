@@ -28,7 +28,10 @@ export default class Profile extends Component {
             postIds: [],
             posts: [],
             postIdAndName: {},
-            isLocal: false
+            isLocal: false,
+            settings: {
+                backgroundImage: false,
+            }
         };
         this.fetchData = this.fetchData.bind(this);
     }
@@ -46,6 +49,7 @@ export default class Profile extends Component {
         } catch {
             this.setState({person: false})
         }
+        let settings = await this.fetchSettings();
         const options = { username: username, decrypt: false }
         let postIds = [];
         let postIdAndName = {}
@@ -64,8 +68,17 @@ export default class Profile extends Component {
         return this.setState({
                     isLoading: false,
                     postIds: postIds,
+                    settings: settings,
                     postIdAndName: postIdAndName
                 });
+    }
+    fetchSettings = () => {
+        const options = { decrypt: false }
+        return getFile('settings.json', options)
+            .then((file) => {
+                let settings = JSON.parse(file || false)
+                return settings ? settings : this.state.settings
+            })
     }
     addFriend = async (event) => {
         event.preventDefault();
@@ -101,7 +114,7 @@ export default class Profile extends Component {
     render() {
         const { person, username, isLoading } = this.state;
         const backgroundStyle = {
-            'backgroundImage': `url("${backPic}"`
+            'backgroundImage': `url("${this.state.settings.backgroundImage ? this.state.settings.backgroundImage : backPic}"`
         }
         if (this.props.match.params.username !== username) { this.isLocal();this.fetchData()}
         return (

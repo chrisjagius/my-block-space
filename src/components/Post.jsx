@@ -1,6 +1,10 @@
 import React, {Component} from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import Like from '../assets/like.svg';
+import Comment from '../assets/comment.svg';
+import Options from '../assets/options.svg';
+import { loadUserData, putFile, getFile } from 'blockstack';
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
 export default class Post extends Component {
@@ -8,8 +12,14 @@ export default class Post extends Component {
         super(props);
         this.state = {
             now: Date.now(),
-            fullText: false
+            fullText: false,
+            isLocal: false,
+            toggleOptions: false,
+            deleted: false
         }
+    }
+    isLocal = () => {
+        this.setState({isLocal: this.props.username === loadUserData().username ? true : false});
     }
 
     parseDate = (time) => {
@@ -27,15 +37,34 @@ export default class Post extends Component {
     showFulltext = () => {
         this.setState({ fullText: !this.state.fullText})
     }
+    toggleOptions = () => {
+        this.setState({toggleOptions: !this.state.toggleOptions})
+    }
+    deletePost = async () => {
+        const { status } = this.props;
+        const optionsSend = { encrypt: false }
+        const optionsReceive = { decrypt: false }
+        await putFile(`post${status.created_at}.json`, '', optionsSend);
+        let file = await getFile('postids.json', optionsReceive)
+        try {
+            file = JSON.parse(file);
+            file = file.filter(postId => postId !== status.created_at);
+            await putFile('postids.json', JSON.stringify(file), optionsSend)
+            this.setState({deleted: true});
+        } catch (e) {
+            console.log(`We had a problem deleting the post. message: ${e}`)
+        }
+    }
 
     componentDidMount() {
+        this.isLocal();
     }
 
     render() {
         const {person, username, status} = this.props;
 
-        return (
-            <div className="my-post" >
+        return (<div>
+            {!this.state.deleted && <div className="my-post" >
                 <Row className='poster-info-con'>
                     <Col xs={2}>
                         <Link className='post-link' to={`/users/${username}`}><img
@@ -61,7 +90,22 @@ export default class Post extends Component {
                 {!this.state.fullText && (status.text.length > 500 ? (<pre>{status.text.substring(0, 500)}...<br/><strong className='show-more' onClick={this.showFulltext}>show more</strong></pre>) : <pre>{status.text}</pre>)}
 
                 {this.state.fullText && <pre>{status.text} <br /><strong className='show-more' onClick={this.showFulltext}>show less</strong></pre>}
-            </div>
+                
+                <Row >
+                    <Col xs={4}>
+                        <Row className='post-option-con'>
+                            <Col xs={2}><img className='post-icon' src={Like} alt='like' /></Col>
+                            <Col xs={2}><img className='post-icon' src={Comment} alt='comment' /></Col>
+                        </Row>
+                    </Col>
+                    {this.state.isLocal && <Col xs={{ span: 4, offset: 4 }}>
+                        <img className='post-icon' onClick={this.toggleOptions} src={Options} alt='options' />
+                        {this.state.toggleOptions && <Dropdown.Menu show>
+                            <Dropdown.Item onClick={this.deletePost}>Delete post</Dropdown.Item>
+                        </Dropdown.Menu>}
+                    </Col>}
+                </Row>
+            </div>}</div>
         )
     }
 }

@@ -336,6 +336,7 @@ hr {
 .my-post > hr {
   margin: 0;
   padding: 0;
+  width: 100%;
 }
 .my-post > pre {
   text-align: left;
@@ -395,6 +396,23 @@ hr {
   max-width: 100%;
   max-height: 50vh;
 }
+.post-option-con {
+  padding-left: 0.5em;
+  padding-bottom: 0.5em;
+}
+/* .post-icon {
+  width: 2em;
+  height: 2em;
+} */
+.post-icon:hover {
+  background-color: #dadadaca;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.post-icon {
+  padding: 0.5em;
+}
+
 .delete-img {
   position: absolute;
   top: 0;

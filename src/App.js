@@ -75,7 +75,6 @@ export default class App extends Component {
     getFile('friends.json', options)
       .then((file) => {
         let friends = JSON.parse(file || '[]')
-        friends.push(this.state.username)
         this.setState({
           friends: friends
         })
@@ -109,6 +108,8 @@ export default class App extends Component {
   }
 
   render() {
+    let friends = this.state.friends
+    if (!friends.includes(this.state.username)) {friends.push(this.state.username)}
     return (
       <div className="App">
         {!this.state.isSignedIn ?
@@ -136,7 +137,7 @@ export default class App extends Component {
               render={
                 props => <Feed
                   searchFor={this.searchFor}
-                  friends={this.state.friends}
+                  friends={friends}
                   person={this.state.person}
                   username={this.state.username}
                   {...props} />
@@ -158,7 +159,7 @@ export default class App extends Component {
               render={
                 props => <Feed
                   searchFor={this.searchFor}
-                  friends={this.state.friends}
+                  friends={friends}
                   person={this.state.person}
                   username={this.state.username}
                   {...props} />

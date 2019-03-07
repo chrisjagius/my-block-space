@@ -46,6 +46,7 @@ export default class MyProfile extends Component {
         let file = await getFile('postids.json', options)
         try {
             postIds = JSON.parse(file || '[]')
+            console.log(postIds)
             if (postIds.length > 0) {
                 for (let i = 0; i < postIds.length; i++) {
                     postIdAndName[`${postIds[i]}`] = this.props.username;

@@ -28,6 +28,7 @@ export default class InfiniteScroll extends Component {
                 i++
             } catch {
                 console.log(`Something went wrong with fetshing post ${id}. message: ${file}`)
+                i++
             }
         }
         return this.setState({ posts: posts, counter: i, loadPost: false })
@@ -50,6 +51,7 @@ export default class InfiniteScroll extends Component {
                 i++
             } catch {
                 console.log(`Something went wrong with fetching post ${id}. message: ${file}`)
+                i++
             }
         }
         return this.setState({ posts: posts, counter: i, loadPost: false })
