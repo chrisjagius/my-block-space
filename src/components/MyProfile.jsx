@@ -18,19 +18,14 @@ export default class MyProfile extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            checked: false,
             newStatus: "",
             isLoading: true,
             changeInfo: false,
             newImage: false,
             settings: {
                 backgroundImage: false,
-                image: false,
-                bio: false,
-                displayName: false
             },
             displayFriends: false,
-            posts: {},
             postIds: [],
             postIdAndName: {}
         };
@@ -43,34 +38,28 @@ export default class MyProfile extends Component {
         return this.props.match.params.username === loadUserData().username ? true : false;
     }
 
-    fetchData = () => {
+    fetchData = async () => {
         let postIds;
         let postIdAndName = {}
         const options = { decrypt: false }
-        let settings;
-        getFile('postids.json', options)
-        .then((file) => {
+        let settings = await this.fetchSettings();
+        let file = await getFile('postids.json', options)
+        try {
             postIds = JSON.parse(file || '[]')
             if (postIds.length > 0) {
                 for (let i = 0; i < postIds.length; i++) {
                     postIdAndName[`${postIds[i]}`] = this.props.username;
                 }
             }
-        })
-        .then(async()=> {
-            settings = await this.fetchSettings()
-        })
-        .catch(() => {
-            console.log('oepsie, could not fetch data')
-        })
-        .finally(() => {
-            this.setState({
-                isLoading: false,
-                postIds: postIds,
-                postIdAndName: postIdAndName,
-                settings: settings
-            });
-        })
+        } catch (e) {
+            console.log(`Couldn't fetch postids. message: ${e}`)
+        } 
+        return this.setState({
+            isLoading: false,
+            postIds: postIds,
+            postIdAndName: postIdAndName,
+            settings: settings
+        });
     }
     fetchSettings = () => {
         const options = { decrypt: false }
@@ -83,7 +72,6 @@ export default class MyProfile extends Component {
 
     saveNewStatus() {
         let postIds = this.state.postIds;
-        let posts = this.state.posts;
         let text = this.state.newStatus.trim();
         if (text.length === 0) {return false};
         let createdAt = Date.now();
@@ -99,12 +87,12 @@ export default class MyProfile extends Component {
         postIds.unshift(createdAt);
         const options = {encrypt: false }
         putFile(`post${createdAt}.json`, JSON.stringify(post), options)
-        .then(() => {
+        .then((resp) => {
+            console.log(resp)
             putFile('postids.json', JSON.stringify(postIds), options)
             .then(() => {
                 this.setState({
                     postIds: postIds,
-                    posts: posts,
                     isLoading: true
                 })
                 this.fetchData()
@@ -351,7 +339,7 @@ export default class MyProfile extends Component {
                         <Row>
                         <Col xs={1} md={1} xl={2}></Col>
                             <Col sm={12} md={10} xl={8}>
-                                {!this.state.isLoading && <InfiniteScroll array={false} order={this.state.postIds} allPosts={this.state.posts} postIdAndName={this.state.postIdAndName} person={person} username={username} doneLoading={!this.state.isLoading}/>}
+                                {!this.state.isLoading && this.state.postIds.length > 0 && <InfiniteScroll feed={false} order={this.state.postIds} postIdAndName={this.state.postIdAndName} person={person} username={username} doneLoading={!this.state.isLoading}/>}
                         </Col>
                         <Col xs={1} md={1}></Col>
                         </Row>

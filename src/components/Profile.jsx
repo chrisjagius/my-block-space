@@ -179,7 +179,7 @@ export default class Profile extends Component {
                                 <Col xs={1} md={1} xl={2}></Col>
                                 <Col sm={12} md={10} xl={8}>
                                     {this.state.isLoading && <span>Loading...</span>}
-                                    {!this.state.isLoading && this.state.postIds.length > 0 && <InfiniteScroll array={false} order={this.state.postIds} postIdAndName={this.state.postIdAndName} person={person} username={username} doneLoading={true} />
+                                    {!this.state.isLoading && this.state.postIds.length > 0 && <InfiniteScroll feed={false} order={this.state.postIds} postIdAndName={this.state.postIdAndName} person={person} username={username} doneLoading={true} />
                                     }
                                     {this.state.postIds.length === 0 && <h1>This user has no posts yet.</h1>}
                                 </Col>

@@ -84,7 +84,7 @@ export default class Feed extends Component {
                         {this.state.isLoading && <div><ProgressBar className='prog-bar' striped variant="success" now={now} /><p>Loaded {this.state.counter} of {this.props.friends.length} friends.</p></div>}
                         {this.state.noPosts && !this.state.isLoading && <h1>Oepsie, you have no posts in your timeline yet</h1>}
                         {!this.state.noPosts && !this.state.isLoading && 
-                            <InfiniteScroll array={true} order={this.state.order} postIdAndName={this.state.allPosts} doneLoading={this.state.doneLoading} />
+                            <InfiniteScroll feed={true} order={this.state.order} postIdAndName={this.state.allPosts} doneLoading={this.state.doneLoading} />
                         }
                     </Col>
                     <Col md={1} xl={2}></Col>

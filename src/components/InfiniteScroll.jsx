@@ -15,7 +15,6 @@ export default class InfiniteScroll extends Component {
     }
     // Here I fetch the post from the this.props.username - I need the username and postid to do this I get this as postIdAndName I also need an array with ids(aka timestamps) for the order
     loadMore = async () => {
-        console.log(this.props.order)
         let posts = {...this.state.posts}
         let i = this.state.counter;
         while (i < this.state.counter + 3 && i < this.props.order.length) {
@@ -36,7 +35,6 @@ export default class InfiniteScroll extends Component {
 
     // Here I fetch the person and post - I need the username and postid to do this I get this as postIdAndName I also need an array with ids(aka timestamps) for the order
     loadFeed = async () => {
-        console.log('called')
         let posts = { ...this.state.posts };
         let i = this.state.counter
         while (i < this.state.counter + 6 && i < this.props.order.length) {
@@ -66,7 +64,7 @@ export default class InfiniteScroll extends Component {
             var scrolledToBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
             if (scrolledToBottom) {
                 this.setState({ loadPost: true })
-                if (!this.props.array) {
+                if (!this.props.feed) {
                     this.loadMore()
                 } else {
                     this.loadFeed();
@@ -77,22 +75,21 @@ export default class InfiniteScroll extends Component {
 
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll);
-        
+        // check if props posts are loaded, then trigger first fetch for posts
+        if (this.props.doneLoading === true && this.state.counter === 0 && !this.state.first) {
+            this.setState({ loadPost: true, first: true })
+            if (this.props.feed) {
+                this.loadFeed();
+            } else {
+                this.loadMore();
+            }
+        }
     }
     componentWillUnmount() {
         window.removeEventListener('scroll', this.handleOnScroll);
     }
 
     render() {
-        // check if props posts are loaded, then trigger first fetch for posts
-        if (this.props.doneLoading === true && this.state.counter === 0 && !this.state.first) {
-            this.setState({ loadPost: true, first: true })
-            if (this.props.array) {
-                this.loadFeed();
-            } else {
-                this.loadMore();
-            }
-        }
         
         return(
             <div className='infinite-list'>

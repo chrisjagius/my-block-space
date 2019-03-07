@@ -29,7 +29,6 @@ export default class Post extends Component {
     }
 
     componentDidMount() {
-        
     }
 
     render() {
