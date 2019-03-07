@@ -400,10 +400,7 @@ hr {
   padding-left: 0.5em;
   padding-bottom: 0.5em;
 }
-/* .post-icon {
-  width: 2em;
-  height: 2em;
-} */
+
 .post-icon:hover {
   background-color: #dadadaca;
   border-radius: 50%;
