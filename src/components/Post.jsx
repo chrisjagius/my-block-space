@@ -1,10 +1,7 @@
 import React, {Component} from 'react';
-import { Row, Col, Dropdown } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import Like from '../assets/like.svg';
-import Comment from '../assets/comment.svg';
-import Options from '../assets/options.svg';
-import { loadUserData, putFile, getFile } from 'blockstack';
+import PostEngagement from './PostEngagement';
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
 export default class Post extends Component {
@@ -13,13 +10,9 @@ export default class Post extends Component {
         this.state = {
             now: Date.now(),
             fullText: false,
-            isLocal: false,
             toggleOptions: false,
             deleted: false
         }
-    }
-    isLocal = () => {
-        this.setState({isLocal: this.props.username === loadUserData().username ? true : false});
     }
 
     parseDate = (time) => {
@@ -40,25 +33,10 @@ export default class Post extends Component {
     toggleOptions = () => {
         this.setState({toggleOptions: !this.state.toggleOptions})
     }
-    deletePost = async () => {
-        const { status } = this.props;
-        const optionsSend = { encrypt: false }
-        const optionsReceive = { decrypt: false }
-        await putFile(`post${status.created_at}.json`, '', optionsSend);
-        let file = await getFile('postids.json', optionsReceive)
-        try {
-            file = JSON.parse(file);
-            file = file.filter(postId => postId !== status.created_at);
-            await putFile('postids.json', JSON.stringify(file), optionsSend)
-            this.setState({deleted: true});
-        } catch (e) {
-            console.log(`We had a problem deleting the post. message: ${e}`)
-        }
-    }
 
     componentDidMount() {
-        this.isLocal();
     }
+
 
     render() {
         const {person, username, status} = this.props;
@@ -91,20 +69,7 @@ export default class Post extends Component {
 
                 {this.state.fullText && <pre>{status.text} <br /><strong className='show-more' onClick={this.showFulltext}>show less</strong></pre>}
                 
-                <Row >
-                    <Col xs={4}>
-                        <Row className='post-option-con'>
-                            <Col xs={2}><img className='post-icon' src={Like} alt='like' /></Col>
-                            <Col xs={2}><img className='post-icon' src={Comment} alt='comment' /></Col>
-                        </Row>
-                    </Col>
-                    {this.state.isLocal && <Col xs={{ span: 4, offset: 4 }}>
-                        <img className='post-icon' onClick={this.toggleOptions} src={Options} alt='options' />
-                        {this.state.toggleOptions && <Dropdown.Menu show>
-                            <Dropdown.Item onClick={this.deletePost}>Delete post</Dropdown.Item>
-                        </Dropdown.Menu>}
-                    </Col>}
-                </Row>
+            <PostEngagement></PostEngagement>
             </div>}</div>
         )
     }
