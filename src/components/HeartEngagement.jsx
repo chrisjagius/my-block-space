@@ -3,12 +3,14 @@ import styled from 'styled-components';
 import like from '../assets/like.svg'
 
 const Like = styled.div`
-    margin-top: 5px;
-    margin-left: 12px;
+    padding: 0.5em;
 
     &:hover {
         fill: red;
         fill-opacity: 1;
+        background-color: #dadadaca;
+        border-radius: 50%;
+        cursor: pointer;
     }
 `;
 

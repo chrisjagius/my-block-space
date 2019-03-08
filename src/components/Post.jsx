@@ -69,7 +69,7 @@ export default class Post extends Component {
 
                 {this.state.fullText && <pre>{status.text} <br /><strong className='show-more' onClick={this.showFulltext}>show less</strong></pre>}
                 
-            <PostEngagement></PostEngagement>
+                <PostEngagement username={username}/>
             </div>}</div>
         )
     }

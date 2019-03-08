@@ -50,7 +50,7 @@ export default class PostEngagement extends Component {
                 <Col xs={4}>
                     <Row className='post-option-con'>
                         <Col xs={2}>
-                            <HeartEngagement></HeartEngagement>
+                            <HeartEngagement/>
                         </Col>
                         <Col xs={2}><img className='post-icon' src={Comment} alt='comment' /></Col>
                     </Row>
