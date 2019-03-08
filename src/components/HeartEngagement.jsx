@@ -4,12 +4,14 @@ import like from '../assets/like.svg'
 
 const Like = styled.div`
     margin-top: 5px;
-    margin-left: 3px;
+    margin-left: 12px;
+
     &:hover {
         fill: red;
         fill-opacity: 1;
     }
-`
+`;
+
 export default class HeartEngagement extends Component {
     constructor(props) {
         super(props);
@@ -23,9 +25,10 @@ export default class HeartEngagement extends Component {
     }
 
     render() {
-        let likedButton;
+        let likeButton;
         if (this.state.liked) {
-            likedButton = <svg xmlns="http://www.w3.org/2000/svg"
+            // filled like button
+            likeButton = <svg xmlns="http://www.w3.org/2000/svg"
                             width="20" 
                             height="20"
                             viewBox="0 0 492.719 492.719"
@@ -39,7 +42,8 @@ export default class HeartEngagement extends Component {
                         </svg>
         
         } else {
-            likedButton = <svg xmlns="http://www.w3.org/2000/svg" 
+            // not filled like button
+            likeButton = <svg xmlns="http://www.w3.org/2000/svg" 
                             width="20" 
                             height="20"
                             viewBox="0 0 471.701 471.701">
@@ -56,7 +60,7 @@ export default class HeartEngagement extends Component {
 
         return (
                 <Like onClick={this.handleLike}>
-                    {likedButton}
+                    {likeButton}
                 </Like>
         )
     }
