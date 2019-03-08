@@ -112,7 +112,6 @@ export default class App extends Component {
 
   render() {
     const friends = this.state.friends;
-    console.log(this.state.isLoading)
     return (
       <div className="App">
         {!this.state.isSignedIn ?
