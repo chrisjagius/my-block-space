@@ -29,7 +29,7 @@ export default class PostEngagement extends Component {
             file = JSON.parse(file);
             file = file.filter(postId => postId !== status.created_at);
             await putFile('postids.json', JSON.stringify(file), optionsSend)
-            this.setState({deleted: true});
+            this.props.deleted();
         } catch (e) {
             console.log(`We had a problem deleting the post. message: ${e}`)
         }

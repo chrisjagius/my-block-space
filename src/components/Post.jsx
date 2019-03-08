@@ -33,6 +33,9 @@ export default class Post extends Component {
     toggleOptions = () => {
         this.setState({toggleOptions: !this.state.toggleOptions})
     }
+    handleDelete = () => {
+        this.setState({deleted: !this.state.deleted});
+    }
 
     componentDidMount() {
     }
@@ -69,7 +72,7 @@ export default class Post extends Component {
 
                 {this.state.fullText && <pre>{status.text} <br /><strong className='show-more' onClick={this.showFulltext}>show less</strong></pre>}
                 
-                <PostEngagement username={username}/>
+                <PostEngagement username={username} status={status} deleted={this.handleDelete}/>
             </div>}</div>
         )
     }
