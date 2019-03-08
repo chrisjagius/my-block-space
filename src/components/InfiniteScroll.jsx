@@ -17,7 +17,7 @@ export default class InfiniteScroll extends Component {
     loadMore = async () => {
         let posts = {...this.state.posts}
         let i = this.state.counter;
-        while (i < this.state.counter + 3 && i < this.props.order.length) {
+        while (i < this.state.counter + 4 && i < this.props.order.length) {
             let id = this.props.order[i]
             let username = this.props.postIdAndName[id]
             const options = { username: username, decrypt: false }

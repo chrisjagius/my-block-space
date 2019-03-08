@@ -46,15 +46,15 @@ export default class PostEngagement extends Component {
         return (
         <div>
             <Row >
-                <Col xs={4}>
+                <Col xs={5}>
                     <Row >
-                        <Col  xs={2}>
+                            <Col xs={{ span: 2, offset: 1 }}>
                             <HeartEngagement />
                         </Col>
                         <Col xs={2}><img className='post-icon' src={Comment} alt='comment' /></Col>
                     </Row>
                 </Col>
-                {this.state.isLocal && <Col xs={{ span: 4, offset: 4 }}>
+                {this.state.isLocal && <Col xs={{ span: 3, offset: 4 }}>
                     <img className='post-icon' onClick={this.toggleOptions} src={Options} alt='options' />
                     {this.state.toggleOptions && <Dropdown.Menu show>
                         <Dropdown.Item onClick={this.deletePost}>Delete post</Dropdown.Item>
