@@ -44,11 +44,11 @@ export default class PostEngagement extends Component {
 
     render() {
         return (
-        <div>
+        <div className='post-engagement-con'>
             <Row >
                 <Col xs={5}>
                     <Row >
-                            <Col xs={{ span: 2, offset: 1 }}>
+                        <Col xs={{ span: 2, offset: 1 }}>
                             <HeartEngagement />
                         </Col>
                         <Col xs={2}><img className='post-icon' src={Comment} alt='comment' /></Col>

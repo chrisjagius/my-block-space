@@ -396,10 +396,6 @@ hr {
   max-width: 100%;
   max-height: 50vh;
 }
-.post-option-con {
-  padding-left: 0.5em;
-  padding-bottom: 0.5em;
-}
 
 .post-icon:hover {
   background-color: #dadadaca;
