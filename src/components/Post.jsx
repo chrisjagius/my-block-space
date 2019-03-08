@@ -38,6 +38,7 @@ export default class Post extends Component {
     }
 
     componentDidMount() {
+        console.log(this.props.person.avatarUrl())
     }
 
 
