@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import { Row, Col, Dropdown } from 'react-bootstrap';
-import Like from '../assets/like.svg';
 import Comment from '../assets/comment.svg';
 import Options from '../assets/options.svg';
 import { loadUserData, putFile, getFile } from 'blockstack';
@@ -12,6 +11,7 @@ export default class PostEngagement extends Component {
         super(props);
         this.state = {
             isLocal: false,
+            toggleOptions: false
         }
     }
 
@@ -34,9 +34,8 @@ export default class PostEngagement extends Component {
             console.log(`We had a problem deleting the post. message: ${e}`)
         }
     }
-
-    handleLike = () => {
-        alert('Like clicked');
+    toggleOptions = () => {
+        this.setState({toggleOptions: !this.state.toggleOptions})
     }
 
     componentDidMount() {
@@ -48,9 +47,9 @@ export default class PostEngagement extends Component {
         <div>
             <Row >
                 <Col xs={4}>
-                    <Row className='post-option-con'>
-                        <Col xs={2}>
-                            <HeartEngagement/>
+                    <Row >
+                        <Col  xs={2}>
+                            <HeartEngagement />
                         </Col>
                         <Col xs={2}><img className='post-icon' src={Comment} alt='comment' /></Col>
                     </Row>
