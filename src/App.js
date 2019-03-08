@@ -40,7 +40,8 @@ export default class App extends Component {
         }
       },
       username: null,
-      friends: []
+      friends: [],
+      isLoading: true
     }
 
     if (isSignedIn) {
@@ -63,11 +64,11 @@ export default class App extends Component {
   loadPerson = async () => {
     let userData = loadUserData()
     let person = await new Person(userData.profile)
-    this.loadFriends();
+    await this.loadFriends();
     let username = await userData.username
     // let urlusername = username.slice(0, -11);
     this.setState({ person, username })
-    this.props.history.push(`/${username}`)
+    this.props.history.push(`/`)
   }
 
   loadFriends = () => {
@@ -75,8 +76,10 @@ export default class App extends Component {
     getFile('friends.json', options)
       .then((file) => {
         let friends = JSON.parse(file || '[]')
+        if (!friends.includes(this.state.username)) { friends.push(this.state.username) }
         this.setState({
-          friends: friends
+          friends: friends,
+          isLoading: false
         })
       })
   }
@@ -108,8 +111,8 @@ export default class App extends Component {
   }
 
   render() {
-    let friends = this.state.friends
-    if (!friends.includes(this.state.username)) {friends.push(this.state.username)}
+    const friends = this.state.friends;
+    console.log(this.state.isLoading)
     return (
       <div className="App">
         {!this.state.isSignedIn ?
@@ -154,7 +157,7 @@ export default class App extends Component {
                   {...props} />
               }
             />
-            <Route
+            {!this.state.isLoading && <Route
               exact path='/'
               render={
                 props => <Feed
@@ -164,7 +167,7 @@ export default class App extends Component {
                   username={this.state.username}
                   {...props} />
               }
-            />
+            />}
             
           </Switch></div>)
         }

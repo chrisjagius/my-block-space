@@ -70,6 +70,7 @@ export default class Feed extends Component {
     componentDidMount() {
         this.setState({isLoading: true})
         this.fetchPostsFromFriends()
+        console.log(this.props.friends)
     }
     
 
