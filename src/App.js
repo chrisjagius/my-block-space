@@ -9,17 +9,16 @@ import {
   isUserSignedIn,
   redirectToSignIn,
   handlePendingSignIn,
-  loadUserData,
-  getFile,
-  Person
 } from 'blockstack';
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, withRouter, Redirect } from 'react-router-dom'
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { currentUserInformation } from './actions';
 import './App.css';
 
-const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
 
-export default class App extends Component {
+class App extends Component {
 
   constructor(props) {
     super(props)
@@ -27,29 +26,16 @@ export default class App extends Component {
     let isSignedIn = this.checkSignedInStatus();
 
     this.state = {
-      isSignedIn,
-      person: {
-        name() {
-          return 'Anonymous';
-        },
-        avatarUrl() {
-          return avatarFallbackImage;
-        },
-        description() {
-          return 'No description'
-        }
-      },
-      username: null,
-      friends: [],
-      isLoading: true
+      isSignedIn
     }
 
     if (isSignedIn) {
-      this.loadPerson();
+      this.props.currentUserInformation();
     }
   }
 
   // function checks if user is signed in.
+  // then calls function to load current user info
   checkSignedInStatus = () => {
     if (isUserSignedIn()) {
       return true;
@@ -61,57 +47,25 @@ export default class App extends Component {
     }
   }
 
-  loadPerson = async () => {
-    let userData = loadUserData()
-    let person = await new Person(userData.profile)
-    await this.loadFriends();
-    let username = await userData.username
-    // let urlusername = username.slice(0, -11);
-    this.setState({ person, username })
-    this.props.history.push(`/`)
-  }
-
-  loadFriends = () => {
-    const options = { decrypt: false }
-    getFile('friends.json', options)
-      .then((file) => {
-        let friends = JSON.parse(file || '[]')
-        if (!friends.includes(this.state.username)) { friends.push(this.state.username) }
-        this.setState({
-          friends: friends,
-          isLoading: false
-        })
-      })
-  }
-
   handleSignIn = (e) => {
     e.preventDefault();
     const origin = window.location.origin
     redirectToSignIn(origin, origin + '/manifest.json', ['store_write', 'publish_data'])
   }
 
+  //search by blockstack id, by pushing blockstack id in url, route users handles search
   searchFor = (name) => {
     this.props.history.push(`/users/${name}`)
   }
+
+  // TODO: create solution for update friends array
   updateFriends = (friends) => {
     this.setState({friends: friends})
   }
 
-  componentWillMount() {
-    if (isSignInPending()) {
-      handlePendingSignIn().then((userData) => {
-        // not sure what to do with user data
-        window.location = window.location.origin;
-      });
-    }
-  }
-
-  componentDidMount() {
-    // this.loadPerson()
-  }
-
   render() {
-    const friends = this.state.friends;
+    const {friends, loaded, person, username} = this.props.curUserInfo;
+
     return (
       <div className="App">
         {!this.state.isSignedIn ?
@@ -119,8 +73,8 @@ export default class App extends Component {
           :
           (<div><Navbar
             searchFor={this.searchFor}
-            person={this.state.person}
-            username={this.state.username}
+            person={person}
+            username={username}
            />
           <Switch>
             <Route
@@ -128,9 +82,9 @@ export default class App extends Component {
               render={
                 props => <Profile
                   updateFriends={this.updateFriends}
-                  friends={this.state.friends}
-                  person={this.state.person}
-                  username={this.state.username}
+                  friends={friends}
+                  person={person}
+                  username={username}
                   {...props} />
               }
             />
@@ -140,8 +94,8 @@ export default class App extends Component {
                 props => <Feed
                   searchFor={this.searchFor}
                   friends={friends}
-                  person={this.state.person}
-                  username={this.state.username}
+                  person={person}
+                  username={username}
                   {...props} />
               }
             />
@@ -150,20 +104,20 @@ export default class App extends Component {
               render={
                 props => <MyProfile
                   searchFor={this.searchFor}
-                  friends={this.state.friends}
-                  person={this.state.person}
-                  username={this.state.username}
+                  friends={friends}
+                  person={person}
+                  username={username}
                   {...props} />
               }
             />
-            {!this.state.isLoading && <Route
+              {loaded && <Route
               exact path='/'
               render={
                 props => <Feed
                   searchFor={this.searchFor}
                   friends={friends}
-                  person={this.state.person}
-                  username={this.state.username}
+                  person={person}
+                  username={username}
                   {...props} />
               }
             />}
@@ -174,3 +128,16 @@ export default class App extends Component {
     );
   }
 }
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  currentUserInformation
+}, dispatch);
+
+const mapStateToProps = (state, ownProps) => {
+  return ({
+    history: ownProps.history,
+    curUserInfo: state.curuserInfo
+  })
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

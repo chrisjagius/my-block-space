@@ -3,7 +3,7 @@ import { getFile } from 'blockstack';
 import { Row, Col, ProgressBar } from 'react-bootstrap';
 import InfiniteScroll from './InfiniteScroll';
 import { mergeSort } from '../utils/reverseMergeSort.js';
-import { containsValidProofStatement } from 'blockstack/lib/profiles';
+// import { containsValidProofStatement } from 'blockstack/lib/profiles';
 
 export default class Feed extends Component {
     constructor(props) {
@@ -70,7 +70,6 @@ export default class Feed extends Component {
     componentDidMount() {
         this.setState({isLoading: true})
         this.fetchPostsFromFriends()
-        console.log(this.props.friends)
     }
     
 
