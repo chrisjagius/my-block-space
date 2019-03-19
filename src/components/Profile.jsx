@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, withRouter } from 'react-router-dom';
 import {
     loadUserData,
     Person,
@@ -13,8 +13,11 @@ import NoResult from './NoResult';
 import Loader from './Loader';
 import UserInfo from './UserInfo';
 import InfiniteScroll from './InfiniteScroll';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { currentUserInformation } from '../actions';
 
-export default class Profile extends Component {
+class Profile extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -87,25 +90,24 @@ export default class Profile extends Component {
         const options = { encrypt: false }
         await putFile('friends.json', JSON.stringify(friends), options)
         this.setState({following: true})
+        this.props.currentUserInformation();
     }
     unFriend = async (event) => {
         event.preventDefault();
         let friends = this.props.friends
         let user = this.state.username
         friends = friends.filter(username => username !== user)
-        this.props.updateFriends(friends);
         const options = { encrypt: false }
         await putFile('friends.json', JSON.stringify(friends), options)
         this.setState({ following: false })
+        this.props.currentUserInformation();
     }
 
     componentDidMount() {
         this.isLocal();
         this.fetchData();
     }
-    componentWillReceiveProps() {
-        this.fetchData()
-    }
+    
     logUserInfo = () => {
         console.log(loadUserData());
     }
@@ -187,3 +189,15 @@ export default class Profile extends Component {
         );
     }
 }
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+    currentUserInformation
+}, dispatch);
+
+const mapStateToProps = (state) => {
+    return ({
+        curUserInfo: state.curuserInfo
+    })
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Profile));

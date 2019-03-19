@@ -10,7 +10,7 @@ import {
   redirectToSignIn,
   handlePendingSignIn,
 } from 'blockstack';
-import { Switch, Route, withRouter, Redirect } from 'react-router-dom'
+import { Switch, Route, withRouter } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { currentUserInformation } from './actions';
@@ -58,11 +58,6 @@ class App extends Component {
     this.props.history.push(`/users/${name}`)
   }
 
-  // TODO: create solution for update friends array
-  updateFriends = (friends) => {
-    this.setState({friends: friends})
-  }
-
   render() {
     const {friends, loaded, person, username} = this.props.curUserInfo;
 
@@ -81,14 +76,13 @@ class App extends Component {
               path='/users/:username'
               render={
                 props => <Profile
-                  updateFriends={this.updateFriends}
                   friends={friends}
                   person={person}
                   username={username}
                   {...props} />
               }
             />
-            <Route
+              {loaded && <Route
               exact path='/feed'
               render={
                 props => <Feed
@@ -98,7 +92,7 @@ class App extends Component {
                   username={username}
                   {...props} />
               }
-            />
+            />}
             <Route
               path='/:username'
               render={
