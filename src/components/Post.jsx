@@ -38,25 +38,24 @@ export default class Post extends Component {
     }
 
     componentDidMount() {
-        console.log(this.props.person.avatarUrl())
     }
 
 
     render() {
-        const {person, username, status} = this.props;
+        const {status} = this.props;
 
         return (<div>
             {!this.state.deleted && <div className="my-post" >
                 <Row className='poster-info-con'>
                     <Col xs={2}>
-                        <Link className='post-link' to={`/users/${username}`}><img
-                            src={person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage}
+                        <Link className='post-link' to={`/users/${status.username}`}><img
+                            src={status.imageUrl ? status.imageUrl : avatarFallbackImage}
                             alt=''
                             className="post-img"
                         /></Link>
                     </Col>
                     <Col xs={3} className='poster-info'>
-                        <Link className='post-link' to={`/users/${username}`}>{username}</Link>
+                        <Link className='post-link' to={`/users/${status.username}`}>{status.username}</Link>
                     </Col>
                     <Col xs={4}></Col>
                     <Col xs={3}>
@@ -73,7 +72,7 @@ export default class Post extends Component {
 
                 {this.state.fullText && <pre>{status.text} <br /><strong className='show-more' onClick={this.showFulltext}>show less</strong></pre>}
                 
-                <PostEngagement username={username} status={status} deleted={this.handleDelete}/>
+                <PostEngagement status={status} deleted={this.handleDelete}/>
             </div>}</div>
         )
     }

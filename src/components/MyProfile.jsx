@@ -3,7 +3,6 @@ import {
     loadUserData,
     getFile,
     putFile,
-
 } from 'blockstack';
 import { Row, Col, ListGroup, Button, Form, InputGroup, FormControl } from 'react-bootstrap';
 import backPic from '../assets/standard-wallpaper.jpg';
@@ -12,9 +11,13 @@ import cameraIcon from '../assets/camera.svg';
 import usersIcon from '../assets/users.svg';
 import UserInfo from './UserInfo';
 import InfiniteScroll from './InfiniteScroll';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { currentUserInformation } from '../actions';
+import { withRouter } from 'react-router-dom';
 
 
-export default class MyProfile extends Component {
+class MyProfile extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -82,9 +85,10 @@ export default class MyProfile extends Component {
             id: idNumber++,
             text: text,
             created_at: createdAt,
-            image: this.state.newImage
+            image: this.state.newImage,
+            imageUrl: this.props.curUserInfo.person.avatarUrl(),
+            username: this.props.curUserInfo.username
         }
-
         postIds.unshift(createdAt);
         const options = {encrypt: false }
         putFile(`post${createdAt}.json`, JSON.stringify(post), options)
@@ -177,11 +181,8 @@ export default class MyProfile extends Component {
         this.setState({displayFriends: !this.state.displayFriends})
     }
 
-    componentWillUnmount() {
-    }
-
     render() {
-        const { person, username } = this.props;
+        const { person, username, friends } = this.props.curUserInfo;
         const backgroundStyle = {
             'backgroundImage': `url("${this.state.settings.backgroundImage ? this.state.settings.backgroundImage : backPic}"`
         }
@@ -217,10 +218,10 @@ export default class MyProfile extends Component {
                 </Col>
             </Row>
         </div>);
-        const friendDisplay = this.props.friends.length > 0 ? (<div className='profile-posts'>
+        const friendDisplay = friends.length > 0 ? (<div className='profile-posts'>
             <div className="my-post"><h1>Friends</h1>
             <ListGroup variant="flush">
-            {this.props.friends.map((friend) => (
+            {friends.map((friend) => (
                 <div className="my-friend" key={friend}>
                     <Row>
                         <Col xs={12}>
@@ -351,3 +352,15 @@ export default class MyProfile extends Component {
         );
     }
 }
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+    currentUserInformation
+}, dispatch);
+
+const mapStateToProps = (state) => {
+    return ({
+        curUserInfo: state.curuserInfo
+    })
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MyProfile));

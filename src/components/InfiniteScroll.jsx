@@ -24,7 +24,7 @@ export default class InfiniteScroll extends Component {
             let file = await getFile(`post${id}.json`, options);
             try {
                 let post = JSON.parse(file)
-                posts[id] = <Post person={this.props.person} username={username} status={post} key={post.created_at} />
+                posts[id] = <Post status={post} key={post.created_at} />
                 i++
             } catch {
                 console.log(`Something went wrong with fetshing post ${id}. message: ${file}`)
@@ -41,13 +41,11 @@ export default class InfiniteScroll extends Component {
         while (i < this.state.counter + 6 && i < this.props.order.length) {
             let id = this.props.order[i];
             let username = this.props.postIdAndName[id];
-            let profile = await lookupProfile(username);
-            let person = await new Person(profile);
             const options = { username: username, decrypt: false }
             let file = await getFile(`post${id}.json`, options)
             try {
                 let post = JSON.parse(file)
-                posts[id] = <Post person={person} username={username} status={post} key={post.created_at} />
+                posts[id] = <Post status={post} key={post.created_at} />
                 i++
             } catch {
                 console.log(`Something went wrong with fetching post ${id}. message: ${file}`)

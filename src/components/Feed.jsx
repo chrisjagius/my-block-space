@@ -3,9 +3,11 @@ import { getFile } from 'blockstack';
 import { Row, Col, ProgressBar } from 'react-bootstrap';
 import InfiniteScroll from './InfiniteScroll';
 import { mergeSort } from '../utils/reverseMergeSort.js';
-// import { containsValidProofStatement } from 'blockstack/lib/profiles';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
-export default class Feed extends Component {
+class Feed extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -23,7 +25,7 @@ export default class Feed extends Component {
         let postIdAndName = this.state.allPosts;
         let postids = this.state.order;
         let counter = this.state.counter;
-        let friends = this.props.friends;
+        let friends = this.props.curUserInfo.friends;
         if (counter < friends.length) {
             const options = { username: friends[counter], decrypt: false }
             this.getPostIds(options, postids, postIdAndName, friends[counter])
@@ -74,14 +76,14 @@ export default class Feed extends Component {
     
 
     render() {
-        let now = ((100 / parseInt(this.props.friends.length)) * parseInt(this.state.counter)).toFixed(2);
+        let now = ((100 / parseInt(this.props.curUserInfo.friends.length)) * parseInt(this.state.counter)).toFixed(2);
 
         return (
             <div className='feed-container'>
                 <Row>
                     <Col md={1} xl={2}></Col>
                     <Col sm={12} md={10} xl={8}>
-                        {this.state.isLoading && <div><ProgressBar className='prog-bar' striped variant="success" now={now} /><p>Loaded {this.state.counter} of {this.props.friends.length} friends.</p></div>}
+                        {this.state.isLoading && <div><ProgressBar className='prog-bar' striped variant="success" now={now} /><p>Loaded {this.state.counter} of {this.props.curUserInfo.friends.length} friends.</p></div>}
                         {this.state.noPosts && !this.state.isLoading && <h1>Oepsie, you have no posts in your timeline yet</h1>}
                         {!this.state.noPosts && !this.state.isLoading && 
                             <InfiniteScroll feed={true} order={this.state.order} postIdAndName={this.state.allPosts} doneLoading={this.state.doneLoading} />
@@ -93,3 +95,15 @@ export default class Feed extends Component {
         )
     }
 }
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+
+}, dispatch);
+
+const mapStateToProps = (state) => {
+    return ({
+        curUserInfo: state.curuserInfo
+    })
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Feed));

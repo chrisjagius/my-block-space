@@ -59,7 +59,7 @@ class App extends Component {
   }
 
   render() {
-    const {friends, loaded, person, username} = this.props.curUserInfo;
+    const {loaded} = this.props.curUserInfo;
 
     return (
       <div className="App">
@@ -68,18 +68,12 @@ class App extends Component {
           :
           (<div><Navbar
             searchFor={this.searchFor}
-            person={person}
-            username={username}
            />
           <Switch>
             <Route
               path='/users/:username'
               render={
-                props => <Profile
-                  friends={friends}
-                  person={person}
-                  username={username}
-                  {...props} />
+                props => <Profile {...props} />
               }
             />
               {loaded && <Route
@@ -87,9 +81,6 @@ class App extends Component {
               render={
                 props => <Feed
                   searchFor={this.searchFor}
-                  friends={friends}
-                  person={person}
-                  username={username}
                   {...props} />
               }
             />}
@@ -98,9 +89,6 @@ class App extends Component {
               render={
                 props => <MyProfile
                   searchFor={this.searchFor}
-                  friends={friends}
-                  person={person}
-                  username={username}
                   {...props} />
               }
             />
@@ -109,9 +97,6 @@ class App extends Component {
               render={
                 props => <Feed
                   searchFor={this.searchFor}
-                  friends={friends}
-                  person={person}
-                  username={username}
                   {...props} />
               }
             />}

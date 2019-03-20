@@ -16,7 +16,7 @@ export default class PostEngagement extends Component {
     }
 
     isLocal = () => {
-        this.setState({isLocal: this.props.username === loadUserData().username ? true : false});
+        this.setState({isLocal: this.props.status.username === loadUserData().username ? true : false});
     }
 
     deletePost = async () => {

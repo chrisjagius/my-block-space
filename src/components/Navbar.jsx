@@ -3,6 +3,9 @@ import { Navbar, Nav, InputGroup, FormControl, Button, Dropdown } from 'react-bo
 import {signUserOut} from 'blockstack';
 import { Link } from 'react-router-dom';
 import logo from '../assets/3.png';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
 
@@ -68,7 +71,7 @@ class Navigationbar extends Component {
 
     render() {
         
-        const { person, username } = this.props;
+        const { person, username } = this.props.curUserInfo;
         
         return (
             <div>
@@ -120,4 +123,15 @@ class Navigationbar extends Component {
     }
 }
 
-export default Navigationbar;
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+    
+}, dispatch);
+
+const mapStateToProps = (state) => {
+    return ({
+        curUserInfo: state.curuserInfo
+    })
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Navigationbar));

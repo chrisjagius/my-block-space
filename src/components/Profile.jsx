@@ -67,7 +67,7 @@ class Profile extends Component {
         } catch {
             console.log('oepsie, could not fetch data')
         }
-        this.props.friends.includes(username) ? this.setState({ following: true }) : this.setState({ following: false });
+        this.props.curUserInfo.friends.includes(username) ? this.setState({ following: true }) : this.setState({ following: false });
         return this.setState({
                     isLoading: false,
                     postIds: postIds,
@@ -85,7 +85,7 @@ class Profile extends Component {
     }
     addFriend = async (event) => {
         event.preventDefault();
-        let friends = this.props.friends
+        let friends = this.props.curUserInfo.friends
         friends.push(this.state.username)
         const options = { encrypt: false }
         await putFile('friends.json', JSON.stringify(friends), options)
@@ -94,7 +94,7 @@ class Profile extends Component {
     }
     unFriend = async (event) => {
         event.preventDefault();
-        let friends = this.props.friends
+        let friends = this.props.curUserInfo.friends
         let user = this.state.username
         friends = friends.filter(username => username !== user)
         const options = { encrypt: false }
