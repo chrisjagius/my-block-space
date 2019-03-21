@@ -41,6 +41,7 @@ class App extends Component {
       return true;
     } else if (isSignInPending()) {
       handlePendingSignIn().then(function (userData) {
+        window.location.reload();
       })
       return false;
     }
