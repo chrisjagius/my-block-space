@@ -544,7 +544,10 @@ hr {
   }
 }
 
-@media (min-width: 576px) {
+@media (max-width: 600px) {
+  .landing-square {
+    display: none;
+  }
 }
 @keyframes App-logo-spin {
   from {

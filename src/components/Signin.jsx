@@ -3,15 +3,30 @@ import { Button, Container, Row, Col } from 'react-bootstrap';
 import logo from '../assets/2.png';
 import freeSpeech from '../assets/free-speech-icon.svg';
 import privacy from '../assets/privacy-icon.svg';
-import tracking from '../assets/tracking-icon.svg'
+import tracking from '../assets/tracking-icon.svg';
+import Loader from './Loader';
+import { redirectToSignIn } from 'blockstack';
 
 export default class Signin extends Component {
+    constructor() {
+        super()
+        this.state = {
+            loading: false
+        }
+    }
     
+    handleSignIn = (e) => {
+        e.preventDefault();
+        const origin = window.location.origin
+        redirectToSignIn(origin, origin + '/manifest.json', ['store_write', 'publish_data'])
+        this.setState({loading: !this.state.loading})
+    }
 
     render() {
-        const { handleSignIn } = this.props;
 
         return (
+            <div>
+            {this.state.loading ? <Loader/> :
             <div className="panel-landing">
                 <div className='landing-container'>
                 <div className='landing-logo-container'>
@@ -25,7 +40,7 @@ export default class Signin extends Component {
                         <div className='landing-square-text'>
                             <Button
                                 className='signin-button'
-                                onClick={handleSignIn.bind(this)}
+                                onClick={this.handleSignIn}
                             >
                                 Sign In with Blockstack
                         </Button>
@@ -87,6 +102,8 @@ export default class Signin extends Component {
                         </Row>
                     </Container>
                 </div>
+            </div>
+            }
             </div>
         );
     }

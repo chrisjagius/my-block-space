@@ -46,12 +46,6 @@ class App extends Component {
     }
   }
 
-  handleSignIn = (e) => {
-    e.preventDefault();
-    const origin = window.location.origin
-    redirectToSignIn(origin, origin + '/manifest.json', ['store_write', 'publish_data'])
-  }
-
   //search by blockstack id, by pushing blockstack id in url, route users handles search
   searchFor = (name) => {
     this.props.history.push(`/users/${name}`)
