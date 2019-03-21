@@ -13,7 +13,7 @@ import UserInfo from './UserInfo';
 import InfiniteScroll from './InfiniteScroll';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { currentUserInformation } from '../actions';
+import { currentUserInformation, addToCurrentUserPosts } from '../actions';
 import { withRouter } from 'react-router-dom';
 
 
@@ -22,15 +22,13 @@ class MyProfile extends Component {
         super(props);
         this.state = {
             newStatus: "",
-            isLoading: true,
+            isLoading: false,
             changeInfo: false,
             newImage: false,
             settings: {
                 backgroundImage: false,
             },
-            displayFriends: false,
-            postIds: [],
-            postIdAndName: {}
+            displayFriends: false
         };
         this.handleNewStatusChange = this.handleNewStatusChange.bind(this);
         this.handleNewStatusSubmit = this.handleNewStatusSubmit.bind(this);
@@ -42,6 +40,7 @@ class MyProfile extends Component {
     }
 
     fetchData = async () => {
+        console.log('fetch data is called')
         let postIds;
         let postIdAndName = {}
         const options = { decrypt: false }
@@ -49,21 +48,18 @@ class MyProfile extends Component {
         let file = await getFile('postids.json', options)
         try {
             postIds = JSON.parse(file || '[]')
-            console.log(postIds)
             if (postIds.length > 0) {
                 for (let i = 0; i < postIds.length; i++) {
-                    postIdAndName[`${postIds[i]}`] = this.props.username;
+                    postIdAndName[`${postIds[i]}`] = this.props.curUserInfo.username;
                 }
             }
         } catch (e) {
             console.log(`Couldn't fetch postids. message: ${e}`)
         } 
-        return this.setState({
+        return [this.props.addToCurrentUserPosts(postIds, postIdAndName) ,this.setState({
             isLoading: false,
-            postIds: postIds,
-            postIdAndName: postIdAndName,
             settings: settings
-        });
+        })];
     }
     fetchSettings = () => {
         const options = { decrypt: false }
@@ -75,7 +71,7 @@ class MyProfile extends Component {
     }
 
     saveNewStatus() {
-        let postIds = this.state.postIds;
+        let postIds = this.props.curUserOwnPosts.postIDs;
         let text = this.state.newStatus.trim();
         if (text.length === 0) {return false};
         let createdAt = Date.now();
@@ -97,7 +93,6 @@ class MyProfile extends Component {
             putFile('postids.json', JSON.stringify(postIds), options)
             .then(() => {
                 this.setState({
-                    postIds: postIds,
                     isLoading: true
                 })
                 this.fetchData()
@@ -157,7 +152,7 @@ class MyProfile extends Component {
     }
 
     componentDidMount() {
-        this.fetchData();
+        if (!this.props.curUserOwnPosts.loaded) { this.fetchData()};
     }
 
     logUserInfo = () => {
@@ -341,7 +336,7 @@ class MyProfile extends Component {
                         <Row>
                         <Col xs={1} md={1} xl={2}></Col>
                             <Col sm={12} md={10} xl={8}>
-                                {!this.state.isLoading && this.state.postIds.length > 0 && <InfiniteScroll feed={false} order={this.state.postIds} postIdAndName={this.state.postIdAndName} person={person} username={username} doneLoading={!this.state.isLoading}/>}
+                                {this.props.curUserOwnPosts.postIDs.length > 0 && this.props.curUserOwnPosts.loaded && !this.state.isLoading && <InfiniteScroll order={this.props.curUserOwnPosts.postIDs} postIdAndName={this.props.curUserOwnPosts.postIDAndName} doneLoading={this.props.curUserOwnPosts.loaded}/>}
                         </Col>
                         <Col xs={1} md={1}></Col>
                         </Row>
@@ -354,12 +349,14 @@ class MyProfile extends Component {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-    currentUserInformation
+    currentUserInformation,
+    addToCurrentUserPosts
 }, dispatch);
 
 const mapStateToProps = (state) => {
     return ({
-        curUserInfo: state.curuserInfo
+        curUserInfo: state.curuserInfo,
+        curUserOwnPosts: state.curUserOwnPosts
     })
 };
 

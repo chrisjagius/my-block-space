@@ -6,6 +6,7 @@ import { mergeSort } from '../utils/reverseMergeSort.js';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { addToCurrentUserFeed } from '../actions';
 
 class Feed extends Component {
     constructor(props) {
@@ -30,6 +31,7 @@ class Feed extends Component {
             const options = { username: friends[counter], decrypt: false }
             this.getPostIds(options, postids, postIdAndName, friends[counter])
         } else {
+            this.props.addToCurrentUserFeed(mergeSort(this.state.order), this.state.allPosts);
             this.setState({ order: mergeSort(this.state.order), isLoading: false, noPosts: postids.length === 0 ? true : false, doneLoading: true});
         }
     }
@@ -70,8 +72,11 @@ class Feed extends Component {
     }
 
     componentDidMount() {
-        this.setState({isLoading: true})
-        this.fetchPostsFromFriends()
+        //1000 * 60 * 5 equals 5 minutes, so if the usercomes back to the feed component after 5 minutes we fetch the latest posts again
+        if (!this.props.curUserFeed.loaded || this.props.curUserFeed.lastFetch + 1000 * 60 * 5 < Date.now() || this.props.curUserFeed.lastFetch < this.props.curUserOwnPosts.lastFetch) {
+            this.setState({ isLoading: true })
+            this.fetchPostsFromFriends()
+        }
     }
     
 
@@ -86,7 +91,7 @@ class Feed extends Component {
                         {this.state.isLoading && <div><ProgressBar className='prog-bar' striped variant="success" now={now} /><p>Loaded {this.state.counter} of {this.props.curUserInfo.friends.length} friends.</p></div>}
                         {this.state.noPosts && !this.state.isLoading && <h1>Oepsie, you have no posts in your timeline yet</h1>}
                         {!this.state.noPosts && !this.state.isLoading && 
-                            <InfiniteScroll feed={true} order={this.state.order} postIdAndName={this.state.allPosts} doneLoading={this.state.doneLoading} />
+                            <InfiniteScroll order={this.props.curUserFeed.postIDs} postIdAndName={this.props.curUserFeed.postIDAndName} doneLoading={this.props.curUserFeed.loaded} />
                         }
                     </Col>
                     <Col md={1} xl={2}></Col>
@@ -97,12 +102,14 @@ class Feed extends Component {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-
+    addToCurrentUserFeed
 }, dispatch);
 
 const mapStateToProps = (state) => {
     return ({
-        curUserInfo: state.curuserInfo
+        curUserInfo: state.curuserInfo,
+        curUserFeed: state.curUserFeed,
+        curUserOwnPosts: state.curUserOwnPosts
     })
 };
 

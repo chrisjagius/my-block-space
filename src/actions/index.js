@@ -6,6 +6,8 @@ import {
 } from 'blockstack';
 
 export const CURRENT_USER_INFO = "CURRENT_USER_INFO ";
+export const CURRENT_USER_POSTS = "CURRENT_USER_POSTS";
+export const CURRENT_USER_FEED = "CURRENT_USER_FEED";
 
 async function loadFriends(username) {
     const options = { decrypt: false }
@@ -41,4 +43,33 @@ export function currentUserInformation() {
             console.log(`error in actions/index.js. message: ${e}`)
         }
     };
+}
+export function addToCurrentUserPosts(postIDs, postIDAndName) {
+    return (dispatch) => {
+        const curUserPosts = {
+            postIDs,
+            postIDAndName,
+            loaded: true,
+            lastFetch: Date.now()
+        }
+        dispatch({
+            type: CURRENT_USER_POSTS,
+            payload: curUserPosts
+        })
+    }
+}
+
+export function addToCurrentUserFeed(postIDs, postIDAndName) {
+    return (dispatch) => {
+        const curUserFeed = {
+            postIDs,
+            postIDAndName,
+            loaded: true,
+            lastFetch: Date.now()
+        }
+        dispatch({
+            type: CURRENT_USER_FEED,
+            payload: curUserFeed
+        })
+    }
 }

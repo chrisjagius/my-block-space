@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Post from './Post';
-import { getFile, lookupProfile, Person } from 'blockstack';
+import { getFile } from 'blockstack';
 
 
 export default class InfiniteScroll extends Component {
@@ -13,28 +13,8 @@ export default class InfiniteScroll extends Component {
             first: false
         }
     }
-    // Here I fetch the post from the this.props.username - I need the username and postid to do this I get this as postIdAndName I also need an array with ids(aka timestamps) for the order
-    loadMore = async () => {
-        let posts = {...this.state.posts}
-        let i = this.state.counter;
-        while (i < this.state.counter + 4 && i < this.props.order.length) {
-            let id = this.props.order[i]
-            let username = this.props.postIdAndName[id]
-            const options = { username: username, decrypt: false }
-            let file = await getFile(`post${id}.json`, options);
-            try {
-                let post = JSON.parse(file)
-                posts[id] = <Post status={post} key={post.created_at} />
-                i++
-            } catch {
-                console.log(`Something went wrong with fetshing post ${id}. message: ${file}`)
-                i++
-            }
-        }
-        return this.setState({ posts: posts, counter: i, loadPost: false })
-    }
 
-    // Here I fetch the person and post - I need the username and postid to do this I get this as postIdAndName I also need an array with ids(aka timestamps) for the order
+    // Here I fetch the post - I need the username and postid to do this I get this as postIdAndName I also need an array with ids(aka timestamps) for the order
     loadFeed = async () => {
         let posts = { ...this.state.posts };
         let i = this.state.counter
@@ -64,11 +44,7 @@ export default class InfiniteScroll extends Component {
             var scrolledToBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
             if (scrolledToBottom) {
                 this.setState({ loadPost: true })
-                if (!this.props.feed) {
-                    this.loadMore()
-                } else {
-                    this.loadFeed();
-                }
+                this.loadFeed();
             }
         }
     }
@@ -78,11 +54,7 @@ export default class InfiniteScroll extends Component {
         // check if props posts are loaded, then trigger first fetch for posts
         if (this.props.doneLoading === true && this.state.counter === 0 && !this.state.first) {
             this.setState({ loadPost: true, first: true })
-            if (this.props.feed) {
-                this.loadFeed();
-            } else {
-                this.loadMore();
-            }
+            this.loadFeed();
         }
     }
     componentWillUnmount() {

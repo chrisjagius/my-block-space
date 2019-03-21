@@ -18,7 +18,11 @@ export default class Post extends Component {
     parseDate = (time) => {
         const { now } = this.state;
         if (Math.floor((now - time) / (1000 * 60)) < 60) {
-            return `${Math.floor((now - time) / (1000 * 60))} m`
+            if (Math.floor((now - time) / (1000 * 60)) < 1) {
+                return `${Math.floor((now - time) / 1000)} s`
+            } else {
+                return `${Math.floor((now - time) / (1000 * 60))} m`
+            }
         } else if (Math.floor((now - time) / (1000 * 60 * 60)) < 24) {
             return `${Math.floor((now - time) / (1000 * 60 * 60))} h`
         } else if (Math.floor((now - time) / (1000 * 60 * 60 * 24)) < 7) {
