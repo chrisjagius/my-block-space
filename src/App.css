@@ -399,11 +399,20 @@ hr {
 
 .post-icon:hover {
   background-color: #dadadaca;
-  border-radius: 40%;
+  border-radius: 50%;
   cursor: pointer;
 }
 .post-icon {
-  padding: 0.2em;
+  padding: 0.5em;
+}
+
+span.text-secondary.posts{
+  font-weight: 900;
+}
+
+span#post-count.text-secondary{
+  font-weight: 400;
+  font-size: 13.5px;
 }
 
 .delete-img {
@@ -504,10 +513,6 @@ hr {
 @media (min-width: 576px){
   .card-container {
       max-width: 98%;
-  }
-
-  .post-icon {
-    padding: 0.3em;
   }
 }
 @media only screen and (max-width: 768px) {
