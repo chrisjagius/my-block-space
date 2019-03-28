@@ -88,7 +88,10 @@ class Feed extends Component {
                 <Row>
                     <Col md={1} xl={2}></Col>
                     <Col sm={12} md={10} xl={8}>
-                        {this.state.isLoading && <div><ProgressBar className='prog-bar' striped variant="success" now={now} /><p>Loaded {this.state.counter} of {this.props.curUserInfo.friends.length} friends.</p></div>}
+                        {this.state.isLoading && <div><div className='feed-loader'><div className='hollowLoader'>
+                            <div className='largeBox'></div>
+                            <div className='smallBox'></div>
+                        </div></div><ProgressBar className='prog-bar' striped variant="success" now={now} /><p>Loaded {this.state.counter} of {this.props.curUserInfo.friends.length} friends.</p></div>}
                         {this.state.noPosts && !this.state.isLoading && <h1>Oepsie, you have no posts in your timeline yet</h1>}
                         {!this.state.noPosts && !this.state.isLoading && 
                             <InfiniteScroll order={this.props.curUserFeed.postIDs} postIdAndName={this.props.curUserFeed.postIDAndName} doneLoading={this.props.curUserFeed.loaded} />

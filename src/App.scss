@@ -1,3 +1,8 @@
+$hollowBoxSize: 3em;
+$hollowLight: #ECECEC;
+$hollowDark: #34495e;
+$hollowTiming: 1.75s;
+
 .App {
   text-align: center;
   font-family: 'Heebo', sans-serif;
@@ -457,25 +462,57 @@ hr {
 /* loader  */
 .loader {
   position: absolute;
-  border: 16px solid #f3f3f3; 
-  border-top: 16px solid #868e96;
-  border-radius: 50%;
   top: 50vh;
   left: 45%;
   width: 120px;
   height: 120px;
-  animation: spin 2s linear infinite;
   z-index: 2;
 }
+.hollowLoader {
+  width: $hollowBoxSize;
+  height: $hollowBoxSize;
+  animation: loaderAnim $hollowTiming infinite ease-in-out;
+  outline: 1px solid transparent;
+  .largeBox {
+    height: $hollowBoxSize;
+    width: $hollowBoxSize;
+    background-color: $hollowLight;
+    outline: 1px solid transparent;
+    position: fixed;
+  }
+  .smallBox {
+    background-image: url('https://i.postimg.cc/Vr5cp7W6/android-chrome-192x192.png');
+    background-repeat: no-repeat;
+  background-position: center; 
+    background-size: cover;
+    height: $hollowBoxSize;
+    width: $hollowBoxSize;
+    position: fixed;
+    z-index: 1;
+    outline: 1px solid transparent;
+    animation: smallBoxAnim $hollowTiming alternate infinite ease-in-out;
+  }
+}
+
+@keyframes smallBoxAnim {
+  0% {transform: scale(0.5);}
+  100% {transform: scale(0.9);}
+}
+
+@keyframes loaderAnim {
+  0% {transform: rotate(0deg);}
+  100% {transform: rotate(360deg);}
+}
+/* end loader */
 .feed-loader {
   position: relative;
   margin: 1em auto;
   width: 60px;
   height: 60px;
-  animation: spin 2s linear infinite;
-  border: 8px solid #f3f3f3; 
-  border-top: 8px solid #868e96;
-  border-radius: 50%;
+  // animation: spin 2s linear infinite;
+  // border: 8px solid #f3f3f3; 
+  // border-top: 8px solid #868e96;
+  // border-radius: 50%;
 }
 
 .feed-container {

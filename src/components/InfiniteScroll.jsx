@@ -66,7 +66,10 @@ export default class InfiniteScroll extends Component {
         return(
             <div className='infinite-list'>
                 {this.props.order.map(index => {return this.state.posts[index]})}
-                {this.state.loadPost && <div className='feed-loader'></div>}
+                {this.state.loadPost && <div className='feed-loader'><div className='hollowLoader'>
+                    <div className='largeBox'></div>
+                    <div className='smallBox'></div>
+                </div></div>}
             </div>
         )
     }

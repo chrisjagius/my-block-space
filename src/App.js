@@ -7,14 +7,20 @@ import Feed from './components/Feed';
 import {
   isSignInPending,
   isUserSignedIn,
-  redirectToSignIn,
   handlePendingSignIn,
+  loadUserData,
+  Person
 } from 'blockstack';
 import { Switch, Route, withRouter } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { currentUserInformation } from './actions';
-import './App.css';
+//I separated this bc the below imports are added for the radiks server
+import { User } from 'radiks'
+import VriendUser from './model/vriendUser'
+import FollowInfo from './model/followInfo';
+
+import './App.scss';
 
 
 
@@ -22,29 +28,62 @@ class App extends Component {
 
   constructor(props) {
     super(props)
-
-    let isSignedIn = this.checkSignedInStatus();
-
+    let isSignedIn = isUserSignedIn();
+    let isPending = isSignInPending();
     this.state = {
-      isSignedIn
+      isSignedIn,
+      isPending
     }
 
     if (isSignedIn) {
       this.props.currentUserInformation();
+      this.loadRadiksStuff(loadUserData());
+    }
+    if (isPending) {
+      handlePendingSignIn().then(async(userData) => {
+        if (userData) {
+          this.props.currentUserInformation();
+          this.loadRadiksStuff(userData);
+          this.setState({isSignedIn: true})
+        }
+      })
     }
   }
 
-  // function checks if user is signed in.
-  // then calls function to load current user info
-  checkSignedInStatus = () => {
-    if (isUserSignedIn()) {
-      return true;
-    } else if (isSignInPending()) {
-      handlePendingSignIn().then(function (userData) {
-        window.location.reload();
+  // function checks if user has vriend account.
+  // then calls function to load account info or creates account
+  loadRadiksStuff = async(userData) => {
+    await User.createWithCurrentUser()
+    const curUserHasAccount = await VriendUser.findOne({ username: userData.username, }, { decrypt: true })
+    if (!curUserHasAccount) {
+      const person = await new Person(userData.profile)
+      const username = userData.username
+      const newUser = new VriendUser({
+        description: person.description(),
+        username,
+        image_url: person.avatarUrl(),
+        display_name: person.name(),
+        background_img: '',
+        location: '',
       })
-      return false;
+      await newUser.save()
+      return console.log({newUser})
+    } else {
+      // const followInfo = await new FollowInfo({
+      //   username: userData.username,
+      //   following_cnt: 0,
+      //   follower_cnt: 0,
+      //   following: [],
+      //   followers: [],
+      // })
+      // await followInfo.save()
+      return console.log({curUserHasAccount, followInfo})
     }
+    
+  }
+  
+  componentDidMount = async () => {
+      
   }
 
   //search by blockstack id, by pushing blockstack id in url, route users handles search

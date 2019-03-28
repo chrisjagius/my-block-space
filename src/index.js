@@ -10,6 +10,10 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { configure } from 'radiks';
+
+
+const apiServer = 'http://localhost:3001';
 
 const middleware = [ReduxThunk, logger];
 let store = createStore(
@@ -20,6 +24,9 @@ let store = createStore(
     )
 );
 middleware.push(logger);
+configure({
+    apiServer
+});
 
 ReactDOM.render(
     <Provider store={store}>
