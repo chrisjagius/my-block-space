@@ -16,6 +16,7 @@ import InfiniteScroll from './InfiniteScroll';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { currentUserInformation } from '../actions';
+import FollowInfo from '../model/followInfo';
 
 class Profile extends Component {
     constructor(props) {
@@ -89,6 +90,14 @@ class Profile extends Component {
         friends.push(this.state.username)
         const options = { encrypt: false }
         await putFile('friends.json', JSON.stringify(friends), options)
+        const myFollowInfo = await FollowInfo.findOne({ username: this.props.curUserInfo.username,}, {decrypt: true})
+        myFollowInfo.attrs.following.push(this.state.username)
+        myFollowInfo.update({
+            following_cnt: myFollowInfo.attrs.following_cnt + 1,
+            following: myFollowInfo.attrs.following,
+        })
+        await myFollowInfo.save();
+        console.log(await FollowInfo.findOne({ username: this.props.curUserInfo.username, }, { decrypt: true }))
         this.setState({following: true})
         this.props.currentUserInformation();
     }
@@ -99,6 +108,14 @@ class Profile extends Component {
         friends = friends.filter(username => username !== user)
         const options = { encrypt: false }
         await putFile('friends.json', JSON.stringify(friends), options)
+        const myFollowInfo = await FollowInfo.findOne({ username: this.props.curUserInfo.username, }, { decrypt: true })
+        const newFollowing = myFollowInfo.attrs.following.filter(username => username !== user)
+        myFollowInfo.update({
+            following_cnt: myFollowInfo.attrs.following_cnt - 1,
+            following: newFollowing,
+        })
+        await myFollowInfo.save();
+        console.log(await FollowInfo.findOne({ username: this.props.curUserInfo.username, }, { decrypt: true }))
         this.setState({ following: false })
         this.props.currentUserInformation();
     }
