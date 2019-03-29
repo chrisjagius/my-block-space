@@ -83,7 +83,8 @@ class MyProfile extends Component {
             created_at: createdAt,
             image: this.state.newImage,
             imageUrl: this.props.curUserInfo.person.avatarUrl(),
-            username: this.props.curUserInfo.username
+            username: this.props.curUserInfo.username,
+            fullName: this.props.curUserInfo.person.name()
         }
         postIds.unshift(createdAt);
         const options = {encrypt: false }
@@ -159,6 +160,7 @@ class MyProfile extends Component {
         console.log(loadUserData());
     }
     toggleSettings = () => {
+        console.log('toggleSettings', this.props.curUserInfo.name)
         this.setState({changeInfo: !this.state.changeInfo})
     }
     saveSettings = () => {

@@ -135,7 +135,7 @@ class Profile extends Component {
 
                                     </Col>
                                     <Col xs={2}>
-                                        <p className='text-secondary'>Posts: {this.state.postIds.length}</p>
+                                        <span className='text-secondary posts'>POSTS  <span className='text-secondary' id='post-count'>{this.state.postIds.length}</span></span>
                                     </Col>
                                     <Col xs={2}>
                                         {!this.state.following ? <Button variant="outline-success"

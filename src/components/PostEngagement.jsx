@@ -18,26 +18,9 @@ export default class PostEngagement extends Component {
     isLocal = () => {
         this.setState({isLocal: this.props.status.username === loadUserData().username ? true : false});
     }
-
-    deletePost = async () => {
-        const { status } = this.props;
-        const optionsSend = { encrypt: false }
-        const optionsReceive = { decrypt: false }
-        await putFile(`post${status.created_at}.json`, '', optionsSend);
-        let file = await getFile('postids.json', optionsReceive)
-        try {
-            file = JSON.parse(file);
-            file = file.filter(postId => postId !== status.created_at);
-            await putFile('postids.json', JSON.stringify(file), optionsSend)
-            this.props.deleted();
-        } catch (e) {
-            console.log(`We had a problem deleting the post. message: ${e}`)
-        }
-    }
     toggleOptions = () => {
         this.setState({toggleOptions: !this.state.toggleOptions})
     }
-
     componentDidMount() {
         this.isLocal();
     }
@@ -51,15 +34,10 @@ export default class PostEngagement extends Component {
                         <Col xs={{ span: 2, offset: 1 }}>
                             <HeartEngagement />
                         </Col>
-                        <Col xs={2}><img className='post-icon' src={Comment} alt='comment' /></Col>
+                        <Col xs={2}><img className='post-icon' src={Comment} alt='comment' />
+                        </Col>
                     </Row>
                 </Col>
-                {this.state.isLocal && <Col xs={{ span: 3, offset: 4 }}>
-                    <img className='post-icon' onClick={this.toggleOptions} src={Options} alt='options' />
-                    {this.state.toggleOptions && <Dropdown.Menu show>
-                        <Dropdown.Item onClick={this.deletePost}>Delete post</Dropdown.Item>
-                    </Dropdown.Menu>}
-                </Col>}
             </Row>
         </div>)
     }
