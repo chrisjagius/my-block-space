@@ -67,7 +67,7 @@ class App extends Component {
         location: '',
       })
       const followInfo = await new FollowInfo({
-        username: userData.username,
+        username,
         following_cnt: 0,
         follower_cnt: 0,
         following: [],

@@ -17,6 +17,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { currentUserInformation } from '../actions';
 import FollowInfo from '../model/followInfo';
+import VriendUser from '../model/vriendUser';
+import _ from 'lodash';
 
 class Profile extends Component {
     constructor(props) {
@@ -90,14 +92,22 @@ class Profile extends Component {
         friends.push(this.state.username)
         const options = { encrypt: false }
         await putFile('friends.json', JSON.stringify(friends), options)
-        const myFollowInfo = await FollowInfo.findOne({ username: this.props.curUserInfo.username,}, {decrypt: true})
+
+        //cur user data radiks
+        const myFollowInfoArray = await FollowInfo.fetchList({ username: this.props.curUserInfo.username,}, {decrypt: true})
+        const myFollowInfo = myFollowInfoArray[0]
         myFollowInfo.attrs.following.push(this.state.username)
-        myFollowInfo.update({
-            following_cnt: myFollowInfo.attrs.following_cnt + 1,
-            following: myFollowInfo.attrs.following,
-        })
+        myFollowInfo.attrs.following_cnt++
+
+        //user of profile data radiks
+        const otherFollowInfoArray = await FollowInfo.fetchList({ username: this.state.username, }, { decrypt: true })
+        const otherFollowInfo = otherFollowInfoArray[0]
+        otherFollowInfo.attrs.followers.push(this.props.curUserInfo.username)
+        otherFollowInfo.attrs.follower_cnt++
+
+        console.log({myFollowInfo, otherFollowInfo})
         await myFollowInfo.save();
-        console.log(await FollowInfo.findOne({ username: this.props.curUserInfo.username, }, { decrypt: true }))
+        await otherFollowInfo.save();
         this.setState({following: true})
         this.props.currentUserInformation();
     }
@@ -108,19 +118,25 @@ class Profile extends Component {
         friends = friends.filter(username => username !== user)
         const options = { encrypt: false }
         await putFile('friends.json', JSON.stringify(friends), options)
-        const myFollowInfo = await FollowInfo.findOne({ username: this.props.curUserInfo.username, }, { decrypt: true })
-        const newFollowing = myFollowInfo.attrs.following.filter(username => username !== user)
-        myFollowInfo.update({
-            following_cnt: myFollowInfo.attrs.following_cnt - 1,
-            following: newFollowing,
-        })
+        //curuser data radiks
+        const myFollowInfoArray = await FollowInfo.fetchList({ username: this.props.curUserInfo.username, }, { decrypt: true })
+        const myFollowInfo = myFollowInfoArray[0]
+        myFollowInfo.attrs.following = myFollowInfo.attrs.following.filter(username => username !== user)
+        myFollowInfo.attrs.following_cnt--
+        //user of profile data radiks
+        const otherFollowInfoArray = await FollowInfo.fetchList({ username: user, }, { decrypt: true })
+        const otherFollowInfo = otherFollowInfoArray[0]
+        otherFollowInfo.attrs.followers = otherFollowInfo.attrs.followers.filter(username => username !== this.props.curUserInfo.username)
+        otherFollowInfo.attrs.follower_cnt--
+
+        console.log({ myFollowInfo, otherFollowInfo })
+        await otherFollowInfo.save();
         await myFollowInfo.save();
-        console.log(await FollowInfo.findOne({ username: this.props.curUserInfo.username, }, { decrypt: true }))
         this.setState({ following: false })
         this.props.currentUserInformation();
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.isLocal();
         this.fetchData();
     }
@@ -201,7 +217,7 @@ class Profile extends Component {
                                 <Col xs={1} md={1}></Col>
                             </Row>
                         </div>
-                    </div> : <NoResult username={username}/>}
+                    </div> : <div>{!this.state.isLoading && <NoResult username={username}/>}</div>}
             </div>
         );
     }
