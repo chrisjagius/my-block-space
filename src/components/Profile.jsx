@@ -49,11 +49,11 @@ class Profile extends Component {
     async fetchData() {
         const username = this.props.match.params.username;
         this.setState({ isLoading: true, username: username, postIds: [] })
-        let profile = await lookupProfile(username)
         try {
+            let profile = await lookupProfile(username)
             this.setState({person: new Person(profile)})
         } catch {
-            this.setState({person: false})
+            this.setState({person: false, isLoading: false})
         }
         let settings = await this.fetchSettings();
         const options = { username: username, decrypt: false }
