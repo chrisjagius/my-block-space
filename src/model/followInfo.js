@@ -11,10 +11,6 @@ class FollowInfo extends Model {
         followers: { type: Array, decrypted: true },
     }
 
-    static findFollowInfoByUsername(username, options = { decrypt: true }) {
-        return this.findOne({ username, options });
-    }
-
 }
 
 export default FollowInfo
