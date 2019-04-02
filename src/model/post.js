@@ -4,7 +4,6 @@ class Post extends Model {
     static className = 'Post'
 
     static schema = {
-        _id: { type: String, decrypted: true },
         username: { type: String, decrypted: true },
         user_img_url: { type: String, decrypted: true },
         text: { type: String, decrypted: true },
