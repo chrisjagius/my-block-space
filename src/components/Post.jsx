@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Options from '../assets/options.svg';
 import PostEngagement from './PostEngagement';
 import { loadUserData, putFile, getFile } from 'blockstack';
+import Tag from '../model/tag';
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
 export default class Post extends Component {
@@ -15,6 +16,7 @@ export default class Post extends Component {
             toggleOptions: false,
             deleted: false,
             isLocal: false,
+            tags: []
         }
     }
 
@@ -47,22 +49,34 @@ export default class Post extends Component {
         this.setState({deleted: !this.state.deleted});
     }
     deletePost = async () => {
-        const { status } = this.props;
-        const optionsSend = { encrypt: false }
-        const optionsReceive = { decrypt: false }
-        await putFile(`post${status.created_at}.json`, '', optionsSend);
-        let file = await getFile('postids.json', optionsReceive)
-        try {
-            file = JSON.parse(file);
-            file = file.filter(postId => postId !== status.created_at);
-            await putFile('postids.json', JSON.stringify(file), optionsSend)
-            this.handleDelete();
-        } catch (e) {
-            console.log(`We had a problem deleting the post. message: ${e}`)
-        }
+        //TODO: fix delete to work with radiks
+        // const { status } = this.props;
+        // const optionsSend = { encrypt: false }
+        // const optionsReceive = { decrypt: false }
+        // await putFile(`post${status.created_at}.json`, '', optionsSend);
+        // let file = await getFile('postids.json', optionsReceive)
+        // try {
+        //     file = JSON.parse(file);
+        //     file = file.filter(postId => postId !== status.created_at);
+        //     await putFile('postids.json', JSON.stringify(file), optionsSend)
+        //     this.handleDelete();
+        // } catch (e) {
+        //     console.log(`We had a problem deleting the post. message: ${e}`)
+        // }
     }
+
+    loadTags = async () => {
+        const tags = await Tag.fetchList({ post_id: this.props.radiksId }, { decrypt: true });
+        // const likeInfo = await LikeInfo.fetchList({ username: this.props.curUserInfo.username, post_id: this.props.radiksId }, { decrypt: true });
+        console.log({tags}, 'radiks id is :', this.props.radiksId)
+        if (tags > 0) {
+            return this.setState({ tags })
+        } 
+    }
+
     componentDidMount() {
         this.isLocal();
+        this.loadTags()
         console.log(this.props.radiksId)
     }
 

@@ -101,23 +101,30 @@ class MyProfile extends Component {
         try {
             await putFile(`post${id}.json`, JSON.stringify(post), options)
             await radiksPost.save()
+            console.log('about to go in the if')
+            console.log(this.state.tags)
             const tagArray = _.split(this.state.tags, ' ');
             if (tagArray.length > 0) {
+                console.log('in the if and almost for')
+                console.log(tagArray, this.state.tags)
                 for (let i = 0; i < tagArray.length; i++) {
                     if (tagArray[i].length > 0) {
+                        console.log('inside last loop almost done')
                         const tag = new Tag({
                             tag: tagArray[i],
                             post_id: id,
                             username: this.props.curUserInfo.username,
                         })
+                        console.log(tag)
                         tag.save()  
+                        console.log('all saved')
                     }
                 }
             }
         } catch {
             console.log('somehthing went wrong with creating the post please try again')
         }
-        return [this.setState({isLoading: true}), this.fetchData()]
+        return [this.setState({ isLoading: true, newStatus: "", tags: "", newImage: false}), this.fetchData()]
     }
 
     handleNewStatusChange(event) {
@@ -156,12 +163,7 @@ class MyProfile extends Component {
 
     handleNewStatusSubmit(event) {
         event.preventDefault();
-        this.saveNewStatus()
-        this.setState({
-            newStatus: "",
-            newImage: false,
-            tags: []
-        })
+        this.saveNewStatus();
     }
     deleteImage = () => {
         this.setState({ newImage: false})
