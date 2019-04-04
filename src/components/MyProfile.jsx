@@ -15,6 +15,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { currentUserInformation, addToCurrentUserPosts } from '../actions';
 import { withRouter } from 'react-router-dom';
+import Post from '../model/post';
+import Tag from '../model/tag';
+import _ from 'lodash';
+const uuidv4 = require('uuid/v4');
 
 
 class MyProfile extends Component {
@@ -28,7 +32,8 @@ class MyProfile extends Component {
             settings: {
                 backgroundImage: false,
             },
-            displayFriends: false
+            displayFriends: false,
+            tags: ""
         };
         this.handleNewStatusChange = this.handleNewStatusChange.bind(this);
         this.handleNewStatusSubmit = this.handleNewStatusSubmit.bind(this);
@@ -40,23 +45,21 @@ class MyProfile extends Component {
     }
 
     fetchData = async () => {
-        console.log('fetch data is called')
-        let postIds;
+        let postTimes = [];
         let postIdAndName = {}
-        const options = { decrypt: false }
         let settings = await this.fetchSettings();
-        let file = await getFile('postids.json', options)
         try {
-            postIds = JSON.parse(file || '[]')
-            if (postIds.length > 0) {
-                for (let i = 0; i < postIds.length; i++) {
-                    postIdAndName[`${postIds[i]}`] = this.props.curUserInfo.username;
+            let postsMadeByUser = await Post.fetchList({ username: this.props.curUserInfo.username, }, { decrypt: true })
+            if (postsMadeByUser.length > 0) {
+                for (let i = 0; i < postsMadeByUser.length; i++) {
+                    postIdAndName[`${postsMadeByUser[i].attrs.createdAt}`] = [this.props.curUserInfo.username, postsMadeByUser[i]._id];
+                    postTimes.push(postsMadeByUser[i].attrs.createdAt)
                 }
             }
         } catch (e) {
             console.log(`Couldn't fetch postids. message: ${e}`)
         } 
-        return [this.props.addToCurrentUserPosts(postIds, postIdAndName) ,this.setState({
+        return [this.props.addToCurrentUserPosts(postTimes.reverse(), postIdAndName) ,this.setState({
             isLoading: false,
             settings: settings
         })];
@@ -70,15 +73,15 @@ class MyProfile extends Component {
             })
     }
 
-    saveNewStatus() {
-        let postIds = this.props.curUserOwnPosts.postIDs;
+    async saveNewStatus() {
         let text = this.state.newStatus.trim();
         if (text.length === 0) {return false};
         let createdAt = Date.now();
-        let idNumber = postIds.length
+        const id = uuidv4();
+        const options = { encrypt: false }
 
         let post = {
-            id: idNumber++,
+            id: id,
             text: text,
             created_at: createdAt,
             image: this.state.newImage,
@@ -86,29 +89,39 @@ class MyProfile extends Component {
             username: this.props.curUserInfo.username,
             fullName: this.props.curUserInfo.person.name()
         }
-        postIds.unshift(createdAt);
-        const options = {encrypt: false }
-        putFile(`post${createdAt}.json`, JSON.stringify(post), options)
-        .then((resp) => {
-            console.log(resp)
-            putFile('postids.json', JSON.stringify(postIds), options)
-            .then(() => {
-                this.setState({
-                    isLoading: true
-                })
-                this.fetchData()
-            })
-            .catch(() => {
-                console.log('something went wrong with saving your post id')
-            })
+        const radiksPost = new Post({
+            _id: id,
+            username: this.props.curUserInfo.username,
+            is_post: true,
+            is_repost: false,
+            is_comment: false,
+            original_post_id: id,
         })
-        .catch(() => {
-            console.log('something went wrong with saving your post')
-        })
+        
+        try {
+            await putFile(`post${id}.json`, JSON.stringify(post), options)
+            await radiksPost.save()
+            const tagArray = _.split(this.state.tags, ' ');
+            if (tagArray.length > 0) {
+                for (let i = 0; i < tagArray.length; i++) {
+                    if (tagArray[i].length > 0) {
+                        const tag = new Tag({
+                            tag: tagArray[i],
+                            post_id: id,
+                            username: this.props.curUserInfo.username,
+                        })
+                        tag.save()  
+                    }
+                }
+            }
+        } catch {
+            console.log('somehthing went wrong with creating the post please try again')
+        }
+        return [this.setState({isLoading: true}), this.fetchData()]
     }
 
     handleNewStatusChange(event) {
-        this.setState({ newStatus: event.target.value })
+        this.setState({ [event.target.name]: event.target.value })
     }
     captureFile = (event) => {
         event.preventDefault();
@@ -142,10 +155,12 @@ class MyProfile extends Component {
     }
 
     handleNewStatusSubmit(event) {
+        event.preventDefault();
         this.saveNewStatus()
         this.setState({
             newStatus: "",
-            newImage: false
+            newImage: false,
+            tags: []
         })
     }
     deleteImage = () => {
@@ -307,8 +322,22 @@ class MyProfile extends Component {
                                                     as='textarea'
                                                     className="input-status"
                                                     value={this.state.newStatus}
+                                                    name='newStatus'
                                                     onChange={e => this.handleNewStatusChange(e)}
                                                     placeholder="What's on your mind?"
+                                                />
+                                            </InputGroup>
+                                            <InputGroup size="sm" className="mb-3">
+                                                <InputGroup.Prepend>
+                                                    <InputGroup.Text id="inputGroup-sizing-sm">Tags</InputGroup.Text>
+                                                </InputGroup.Prepend>
+                                                <FormControl 
+                                                aria-label="Small" 
+                                                aria-describedby="inputGroup-sizing-sm" 
+                                                value={this.state.tags}
+                                                name='tags'
+                                                onChange={e => this.handleNewStatusChange(e)}
+                                                placeholder="Separate tags by space"
                                                 />
                                             </InputGroup>
                                     </Col>

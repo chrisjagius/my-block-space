@@ -13,6 +13,11 @@ class VriendUser extends User {
         location: { type: String, decrypted: true },
     }
 
+    static defaults = {
+        background_img: '',
+        location: ''
+    }
+
 }
 
 export default VriendUser

@@ -7,6 +7,9 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { addToCurrentUserFeed } from '../actions';
+import FollowInfo from '../model/followInfo';
+import _ from 'lodash';
+import Post from '../model/post';
 
 class Feed extends Component {
     constructor(props) {
@@ -17,65 +20,61 @@ class Feed extends Component {
             order: [],
             noPosts: false,
             counter: 0,
-            doneLoading: false
+            doneLoading: false,
+            followInfo: []
         }
     }
 
-    // here I call the fetch functions, if counter === friends.length, stop calling fetch functions and setState
-    fetchPostsFromFriends = () => {
-        let postIdAndName = this.state.allPosts;
-        let postids = this.state.order;
+    fetchRadiksPostsFromFriends = async() => {
+        let postTimes = this.state.order;
+        let postIDAndName = this.state.allPosts;
         let counter = this.state.counter;
-        let friends = this.props.curUserInfo.friends;
+        let friends = this.state.followInfo
         if (counter < friends.length) {
-            const options = { username: friends[counter], decrypt: false }
-            this.getPostIds(options, postids, postIdAndName, friends[counter])
+            let postsMadeByUser = await Post.fetchList({ username: friends[counter], }, { decrypt: true })
+            if (postsMadeByUser.length > 0) {
+                const time = Date.now() - (1000 * 60 * 60 * 24 * 7);
+                for (let i = 0; i < postsMadeByUser.length; i++) {
+                    //the if statement makes sure to only fetch post that are not older than one week
+                    if (postsMadeByUser[i].attrs.createdAt > time) {
+                        postIDAndName[`${postsMadeByUser[i].attrs.createdAt}`] = [friends[counter], postsMadeByUser[i]._id];
+                        postTimes.push(postsMadeByUser[i].attrs.createdAt)
+                    } else {
+                        this.setState({
+                            counter: this.state.counter + 1,
+                            order: postTimes,
+                            allPosts: postIDAndName
+                        })
+                        this.fetchRadiksPostsFromFriends()
+                    }
+                } 
+                this.setState({
+                    counter: this.state.counter + 1
+                })
+                this.fetchRadiksPostsFromFriends() 
+            } else {
+                this.setState({
+                    counter: this.state.counter + 1
+                })
+                this.fetchRadiksPostsFromFriends()
+            }
+
         } else {
             this.props.addToCurrentUserFeed(mergeSort(this.state.order), this.state.allPosts);
-            this.setState({ order: mergeSort(this.state.order), isLoading: false, noPosts: postids.length === 0 ? true : false, doneLoading: true});
+            this.setState({ order: mergeSort(this.state.order), isLoading: false, noPosts: postTimes.length === 0 ? true : false, doneLoading: true });
         }
     }
 
-    // here I fetch the postids from a username, then call the fetchPostsfromFriends again till counter === friends.length
-    getPostIds = async(options, postids, postIdAndName, username) => {
-        let resp = await getFile('postids.json', options)
-        try {
-            let file = JSON.parse(resp || '[]');
-            this.setState({ counter: this.state.counter + 1 })
-            if (file.length > 0) {
-                this.concatPostIds(file, postids)
-                this.connectIdWithName(file, postIdAndName, username)
-                this.fetchPostsFromFriends()
-            } else {
-                this.fetchPostsFromFriends()
-            }
-        } catch (e) {
-            console.log(`can't fetch postids. message: ${e}`)
-        }
-    }
-
-    // add post ids to existing array with prev postids
-    concatPostIds = (postId, postids) => {
-        this.setState({ order: [...postids, ...postId]})
-    }
-
-    // connectPostId with username for quick loop-up in the infinite scroll component
-    connectIdWithName = (postId, postIdAndName, username) => {
-        let result = postIdAndName;
-        if (postId.length > 0) {
-            // here I will have to add the postid into the postIdAndName object with a loop
-            for (let i = 0; i < postId.length; i++) {
-                result[`${postId[i]}`] = username;
-            }
-        }
-        return this.setState({allPosts: result})
-    }
-
-    componentDidMount() {
+    async componentDidMount() {
         //1000 * 60 * 5 equals 5 minutes, so if the usercomes back to the feed component after 5 minutes we fetch the latest posts again
+        const friendsInfo = await FollowInfo.fetchOwnList({});
+        const friends = _.head(friendsInfo).attrs.following
+        friends.push(this.props.curUserInfo.username)
+        this.setState({ followInfo: friends})
         if (!this.props.curUserFeed.loaded || this.props.curUserFeed.lastFetch + 1000 * 60 * 5 < Date.now() || this.props.curUserFeed.lastFetch < this.props.curUserOwnPosts.lastFetch) {
             this.setState({ isLoading: true })
-            this.fetchPostsFromFriends()
+            // this.fetchPostsFromFriends()
+            this.fetchRadiksPostsFromFriends()
         }
     }
     

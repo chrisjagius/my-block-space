@@ -11,6 +11,13 @@ class FollowInfo extends Model {
         followers: { type: Array, decrypted: true },
     }
 
+    static defaults = {
+        following_cnt: 0,
+        follower_cnt: 0,
+        following: [],
+        followers: []
+    }
+
 }
 
 export default FollowInfo

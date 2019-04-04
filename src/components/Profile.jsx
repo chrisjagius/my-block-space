@@ -18,6 +18,7 @@ import { connect } from 'react-redux';
 import { currentUserInformation } from '../actions';
 import FollowInfo from '../model/followInfo';
 import VriendUser from '../model/vriendUser';
+import Post from '../model/post';
 import _ from 'lodash';
 
 class Profile extends Component {
@@ -56,24 +57,28 @@ class Profile extends Component {
             this.setState({person: false, isLoading: false})
         }
         let settings = await this.fetchSettings();
-        const options = { username: username, decrypt: false }
-        let postIds = [];
+
+        // const options = { username: username, decrypt: false }
+        let postTimes = [];
         let postIdAndName = {}
-        let resp = await getFile('postids.json', options);
+        // let resp = await getFile('postids.json', options);
         try {
-            postIds = JSON.parse(resp || '[]')
-            if (postIds.length > 0) {
-                for (let i = 0; i < postIds.length; i++) {
-                    postIdAndName[`${postIds[i]}`] = username;
+            // postIds = JSON.parse(resp || '[]')
+            let postsMadeByUser = await Post.fetchList({ username: username, }, { decrypt: true })
+            console.log({postsMadeByUser})
+            if (postsMadeByUser.length > 0) {
+                for (let i = 0; i < postsMadeByUser.length; i++) {
+                    postIdAndName[`${postsMadeByUser[i].attrs.createdAt}`] = [username, postsMadeByUser[i]._id];
+                    postTimes.push(postsMadeByUser[i].attrs.createdAt)
                 }
             }
         } catch {
-            console.log('oepsie, could not fetch data')
+            // console.log('oepsie, could not fetch data')
         }
         this.props.curUserInfo.friends.includes(username) ? this.setState({ following: true }) : this.setState({ following: false });
         return this.setState({
                     isLoading: false,
-                    postIds: postIds,
+                    postIds: postTimes.reverse(),
                     settings: settings,
                     postIdAndName: postIdAndName
                 });

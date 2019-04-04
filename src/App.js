@@ -63,15 +63,9 @@ class App extends Component {
         username,
         image_url: person.avatarUrl(),
         display_name: person.name(),
-        background_img: '',
-        location: '',
       })
       const followInfo = await new FollowInfo({
         username,
-        following_cnt: 0,
-        follower_cnt: 0,
-        following: [],
-        followers: [],
       })
       await newUser.save()
       await followInfo.save()

@@ -1,28 +1,79 @@
 import React, {Component} from 'react';
 import { Row, Col, Dropdown } from 'react-bootstrap';
 import Comment from '../assets/comment.svg';
-import Options from '../assets/options.svg';
-import { loadUserData, putFile, getFile } from 'blockstack';
-import HeartEngagement from './HeartEngagement';
+import { putFile, getFile } from 'blockstack';
+import like from '../assets/like.svg';
+import likeFull from '../assets/like-full.svg';
+import Post from '../model/post';
+import LikeInfo from '../model/like';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 
-export default class PostEngagement extends Component {
+class PostEngagement extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLocal: false,
-            toggleOptions: false
+            postInfo: {},
+            noLikeInfo: true,
+            likeInfo: {
+                post_id: '',
+                username: '',
+                liked: false
+            },
+            likeInfoModel: {},
+            loaded: false
         }
     }
 
-    isLocal = () => {
-        this.setState({isLocal: this.props.status.username === loadUserData().username ? true : false});
+    handleLike = async() => {
+        if (this.state.noLikeInfo) {
+            const likeInfo = new LikeInfo({
+                post_id: this.props.radiksId,
+                username: this.props.curUserInfo.username,
+                liked: true
+            })
+            const postInfo = this.state.postInfo
+            postInfo.update({
+                like_cnt: this.state.postInfo.attrs.like_cnt + 1
+            })
+            await postInfo.save()
+            await likeInfo.save()
+            this.loadPostInfo()
+        } else {
+            const likeInfo = this.state.likeInfoModel
+            likeInfo.update({
+                liked: !this.state.likeInfo.liked
+            })
+            const postInfo = this.state.postInfo
+            this.state.likeInfo.liked ? postInfo.update({ like_cnt: this.state.postInfo.attrs.like_cnt - 1 }) : postInfo.update({ like_cnt: this.state.postInfo.attrs.like_cnt + 1 })
+            await postInfo.save()
+            await likeInfo.save()
+            this.loadPostInfo()
+        }
     }
-    toggleOptions = () => {
-        this.setState({toggleOptions: !this.state.toggleOptions})
+
+    loadPostInfo = async() => {
+        const postInfo = await Post.findById(this.props.radiksId);
+        const likeInfo = await LikeInfo.fetchList({ username: this.props.curUserInfo.username, post_id: this.props.radiksId }, { decrypt: true });
+        if (likeInfo < 1) {
+            console.log(likeInfo)
+            return this.setState({postInfo, loaded: true})
+        } else {
+            console.log({postInfo})
+            return this.setState({
+                postInfo,
+                likeInfo: likeInfo[0].attrs,
+                noLikeInfo: false,
+                likeInfoModel: likeInfo[0],
+                loaded: true
+            })
+        }
     }
+
     componentDidMount() {
-        this.isLocal();
+        this.loadPostInfo()
     }
 
     render() {
@@ -32,7 +83,8 @@ export default class PostEngagement extends Component {
                 <Col xs={5}>
                     <Row >
                         <Col xs={{ span: 2, offset: 1 }}>
-                            <HeartEngagement />
+                                <img className='post-icon' src={!this.state.likeInfo.liked ? like : likeFull} alt='like' onClick={this.handleLike} />
+                                {this.state.loaded && <p>{this.state.postInfo.attrs.like_cnt}</p>}
                         </Col>
                         <Col xs={2}><img className='post-icon' src={Comment} alt='comment' />
                         </Col>
@@ -42,3 +94,15 @@ export default class PostEngagement extends Component {
         </div>)
     }
 }
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+    
+}, dispatch);
+
+const mapStateToProps = (state) => {
+    return ({
+        curUserInfo: state.curuserInfo
+    })
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PostEngagement));

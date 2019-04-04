@@ -63,6 +63,7 @@ export default class Post extends Component {
     }
     componentDidMount() {
         this.isLocal();
+        console.log(this.props.radiksId)
     }
 
     render() {
@@ -102,7 +103,7 @@ export default class Post extends Component {
 
                 {this.state.fullText && <pre>{status.text} <br /><strong className='show-more' onClick={this.showFulltext}>show less</strong></pre>}
                 
-                <PostEngagement status={status} deleted={this.handleDelete}/>
+                <PostEngagement status={status} deleted={this.handleDelete} radiksId={this.props.radiksId}/>
             </div>}</div>
         )
     }

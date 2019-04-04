@@ -5,7 +5,8 @@ class Tag extends Model {
 
     static schema = {
         tag: { type: String, decrypted: true },
-        post_ids: { type: Array, decrypted: true },
+        post_id: { type: String, decrypted: true },
+        username: { type: String, decrypted: true},
     }
 
 }
