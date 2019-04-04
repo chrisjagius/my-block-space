@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Row, Col, Dropdown } from 'react-bootstrap';
+import { Row, Col, Dropdown, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Options from '../assets/options.svg';
 import PostEngagement from './PostEngagement';
@@ -67,9 +67,7 @@ export default class Post extends Component {
 
     loadTags = async () => {
         const tags = await Tag.fetchList({ post_id: this.props.radiksId }, { decrypt: true });
-        // const likeInfo = await LikeInfo.fetchList({ username: this.props.curUserInfo.username, post_id: this.props.radiksId }, { decrypt: true });
-        console.log({tags}, 'radiks id is :', this.props.radiksId)
-        if (tags > 0) {
+        if (tags.length > 0) {
             return this.setState({ tags })
         } 
     }
@@ -77,7 +75,6 @@ export default class Post extends Component {
     componentDidMount() {
         this.isLocal();
         this.loadTags()
-        console.log(this.props.radiksId)
     }
 
     render() {
@@ -116,7 +113,11 @@ export default class Post extends Component {
                 {!this.state.fullText && (status.text.length > 500 ? (<pre>{status.text.substring(0, 500)}...<br/><strong className='show-more' onClick={this.showFulltext}>show more</strong></pre>) : <pre>{status.text}</pre>)}
 
                 {this.state.fullText && <pre>{status.text} <br /><strong className='show-more' onClick={this.showFulltext}>show less</strong></pre>}
-                
+                <div>
+                    {this.state.tags.length > 0 && this.state.tags.map(tag => {
+                        return <Badge pill variant="secondary" key={tag.attrs.tag}>{tag.attrs.tag}</Badge>
+                    })}
+                </div>
                 <PostEngagement status={status} deleted={this.handleDelete} radiksId={this.props.radiksId}/>
             </div>}</div>
         )
