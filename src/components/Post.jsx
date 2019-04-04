@@ -5,6 +5,7 @@ import Options from '../assets/options.svg';
 import PostEngagement from './PostEngagement';
 import { loadUserData, putFile, getFile } from 'blockstack';
 import Tag from '../model/tag';
+import PostModel from '../model/post';
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
 export default class Post extends Component {
@@ -50,19 +51,21 @@ export default class Post extends Component {
     }
     deletePost = async () => {
         //TODO: fix delete to work with radiks
-        // const { status } = this.props;
-        // const optionsSend = { encrypt: false }
-        // const optionsReceive = { decrypt: false }
-        // await putFile(`post${status.created_at}.json`, '', optionsSend);
-        // let file = await getFile('postids.json', optionsReceive)
-        // try {
-        //     file = JSON.parse(file);
-        //     file = file.filter(postId => postId !== status.created_at);
-        //     await putFile('postids.json', JSON.stringify(file), optionsSend)
-        //     this.handleDelete();
-        // } catch (e) {
-        //     console.log(`We had a problem deleting the post. message: ${e}`)
-        // }
+        const optionsSend = { encrypt: false }
+        await putFile(`post${this.props.radiksId}.json`, '', optionsSend);
+        try {
+            console.log(this.props.radiksId)
+            const post = await PostModel.findById(this.props.radiksId)
+            post.update({
+                _id: '0',
+                username: ''
+            })
+            console.log({post})
+            post.save()
+            this.handleDelete();
+        } catch (e) {
+            console.log(`We had a problem deleting the post. message: ${e}`)
+        }
     }
 
     loadTags = async () => {
