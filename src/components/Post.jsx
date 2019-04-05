@@ -3,6 +3,7 @@ import { Row, Col, Dropdown, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Options from '../assets/options.svg';
 import PostEngagement from './PostEngagement';
+import Comments from './Comments';
 import { loadUserData, putFile, getFile } from 'blockstack';
 import Tag from '../model/tag';
 import PostModel from '../model/post';
@@ -17,7 +18,8 @@ export default class Post extends Component {
             toggleOptions: false,
             deleted: false,
             isLocal: false,
-            tags: []
+            tags: [],
+            openComments: false
         }
     }
 
@@ -49,6 +51,10 @@ export default class Post extends Component {
     handleDelete = () => {
         this.setState({deleted: !this.state.deleted});
     }
+    handleOpenComments = () => {
+        console.log(`I am pressed and the comment section is: ${!this.state.openComments}`)
+        this.setState({openComments: !this.state.openComments});
+    }
     deletePost = async () => {
         //TODO: fix delete to work with radiks
         const optionsSend = { encrypt: false }
@@ -73,6 +79,14 @@ export default class Post extends Component {
         if (tags.length > 0) {
             return this.setState({ tags })
         } 
+    }
+
+    loadComments = async () => {
+        const comments = await PostModel.fetchList({ original_post_id: this.props.radiksId }, { decrypt: true });
+        if (comments.length > 0) {
+            return this.setState({ comments })
+        }
+        return console.log({comments});
     }
 
     componentDidMount() {
@@ -121,7 +135,8 @@ export default class Post extends Component {
                         return <Badge pill variant="secondary" key={tag.attrs.tag}>{tag.attrs.tag}</Badge>
                     })}
                 </div>
-                <PostEngagement status={status} deleted={this.handleDelete} radiksId={this.props.radiksId}/>
+                <PostEngagement status={status} openComments={this.handleOpenComments} radiksId={this.props.radiksId}/>
+                {this.state.openComments && <Comments />}
             </div>}</div>
         )
     }

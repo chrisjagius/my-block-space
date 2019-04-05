@@ -84,7 +84,7 @@ class PostEngagement extends Component {
                                 <img className='post-icon' src={!this.state.likeInfo.liked ? like : likeFull} alt='like' onClick={this.handleLike} />
                                 {this.state.loaded && <p>{this.state.postInfo.attrs.like_cnt}</p>}
                         </Col>
-                        <Col xs={2}><img className='post-icon' src={Comment} alt='comment' />
+                        <Col xs={2}><img className='post-icon' src={Comment} alt='comment' onClick={() => {this.props.openComments()}} />
                         </Col>
                     </Row>
                 </Col>
