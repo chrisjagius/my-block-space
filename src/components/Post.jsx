@@ -3,13 +3,12 @@ import { Row, Col, Dropdown, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Options from '../assets/options.svg';
 import PostEngagement from './PostEngagement';
-import Comments from './Comments';
-import { loadUserData, putFile, getFile } from 'blockstack';
+import { loadUserData, putFile } from 'blockstack';
 import Tag from '../model/tag';
 import PostModel from '../model/post';
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
-export default class Post extends Component {
+class Post extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -19,7 +18,6 @@ export default class Post extends Component {
             deleted: false,
             isLocal: false,
             tags: [],
-            openComments: false
         }
     }
 
@@ -51,10 +49,6 @@ export default class Post extends Component {
     handleDelete = () => {
         this.setState({deleted: !this.state.deleted});
     }
-    handleOpenComments = () => {
-        console.log(`I am pressed and the comment section is: ${!this.state.openComments}`)
-        this.setState({openComments: !this.state.openComments});
-    }
     deletePost = async () => {
         //TODO: fix delete to work with radiks
         const optionsSend = { encrypt: false }
@@ -81,18 +75,18 @@ export default class Post extends Component {
         } 
     }
 
-    loadComments = async () => {
-        const comments = await PostModel.fetchList({ original_post_id: this.props.radiksId }, { decrypt: true });
-        if (comments.length > 0) {
-            return this.setState({ comments })
-        }
-        return console.log({comments});
-    }
-
     componentDidMount() {
         this.isLocal();
         this.loadTags()
     }
+    // TODO: finish detect url function
+    linkify = (text) => {
+        const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+        return text.replace(urlRegex, (url) => {
+            return `<a href=${url}> ${url} </a>`;
+        });
+    }
+    
 
     render() {
         const {status} = this.props;
@@ -120,24 +114,25 @@ export default class Post extends Component {
                     </Col>
                     <Col xs={0}></Col>
                 </Row>
-                <hr />
+                
                 { status.image &&
                     <div className='post-pic-container'>
                         <img alt='' className='post-pic' src={status.image} />
                         <hr />
                     </div>
                 }
-                {!this.state.fullText && (status.text.length > 500 ? (<pre>{status.text.substring(0, 500)}...<br/><strong className='show-more' onClick={this.showFulltext}>show more</strong></pre>) : <pre>{status.text}</pre>)}
+                {!this.state.fullText && (status.text.length > 500 ? (<pre>{status.text.substring(0, 500)}...<br /><strong className='show-more' onClick={this.showFulltext}>show more</strong></pre>) : <pre>{status.text}</pre>)}
 
                 {this.state.fullText && <pre>{status.text} <br /><strong className='show-more' onClick={this.showFulltext}>show less</strong></pre>}
                 <div>
                     {this.state.tags.length > 0 && this.state.tags.map(tag => {
-                        return <Badge pill variant="secondary" key={tag.attrs.tag}>{tag.attrs.tag}</Badge>
+                        return <Link className='post-link' key={tag._id} to={`/tags/${tag.attrs.tag}`}><Badge pill variant="secondary" key={tag.attrs.tag}>{tag.attrs.tag}</Badge>{"  "}</Link>
                     })}
                 </div>
-                <PostEngagement status={status} openComments={this.handleOpenComments} radiksId={this.props.radiksId}/>
-                {this.state.openComments && <Comments />}
+                <PostEngagement status={status} openComments={this.handleOpenComments} radiksId={this.props.radiksId} reload={this.props.reload}/>
             </div>}</div>
         )
     }
 }
+
+export default Post;

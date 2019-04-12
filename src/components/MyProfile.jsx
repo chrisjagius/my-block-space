@@ -33,7 +33,12 @@ class MyProfile extends Component {
                 backgroundImage: false,
             },
             displayFriends: false,
-            tags: ""
+            tags: "",
+            displayPosts: true,
+            displayComments: false,
+            displayReplies: false,
+            commentTimes: [],
+            commentIDAndName: {},
         };
         this.handleNewStatusChange = this.handleNewStatusChange.bind(this);
         this.handleNewStatusSubmit = this.handleNewStatusSubmit.bind(this);
@@ -49,7 +54,7 @@ class MyProfile extends Component {
         let postIdAndName = {}
         let settings = await this.fetchSettings();
         try {
-            let postsMadeByUser = await Post.fetchList({ username: this.props.curUserInfo.username, }, { decrypt: true })
+            let postsMadeByUser = await Post.fetchList({ username: this.props.curUserInfo.username, is_post: true }, { decrypt: true })
             if (postsMadeByUser.length > 0) {
                 for (let i = 0; i < postsMadeByUser.length; i++) {
                     postIdAndName[`${postsMadeByUser[i].attrs.createdAt}`] = [this.props.curUserInfo.username, postsMadeByUser[i]._id];
@@ -61,7 +66,10 @@ class MyProfile extends Component {
         } 
         return [this.props.addToCurrentUserPosts(postTimes.reverse(), postIdAndName) ,this.setState({
             isLoading: false,
-            settings: settings
+            displayPosts: true,
+            settings: settings,
+            displayComments: false,
+            displayReplies: false,
         })];
     }
     fetchSettings = () => {
@@ -101,7 +109,7 @@ class MyProfile extends Component {
         try {
             await putFile(`post${id}.json`, JSON.stringify(post), options)
             await radiksPost.save()
-            const tagArray = _.split(this.state.tags, ' ');
+            const tagArray = _.uniq(_.split(this.state.tags, ' '));
             if (tagArray.length > 0) {
                 for (let i = 0; i < tagArray.length; i++) {
                     if (tagArray[i].length > 0) {
@@ -184,22 +192,85 @@ class MyProfile extends Component {
             })
         })
     }
+    handleFilterPosts = async(filterOption) => {
+        this.setState({ isLoading: true, 
+            displayPosts: false,
+            displayComments: false,
+            displayReplies: false, 
+        });
+        if (filterOption === 'posts') {
+            this.fetchData()
+        } else if (filterOption === 'comments') {
+            let postTimes = [];
+            let postIdAndName = {}
+            try {
+                let postsMadeByUser = await Post.fetchList({ username: this.props.curUserInfo.username, is_comment: true }, { decrypt: true })
+                if (postsMadeByUser.length > 0) {
+                    for (let i = 0; i < postsMadeByUser.length; i++) {
+                        postIdAndName[`${postsMadeByUser[i].attrs.createdAt}`] = [this.props.curUserInfo.username, postsMadeByUser[i]._id];
+                        postTimes.push(postsMadeByUser[i].attrs.createdAt)
+                    }
+                }
+            } catch (e) {
+                console.log(`Couldn't fetch postids. message: ${e}`)
+            }
+            return this.setState({
+                isLoading: false,
+                commentTimes: postTimes.reverse(),
+                commentIDAndName: postIdAndName,
+                displayComments: true,
+                displayReplies: false,
+            })
+        } else if (filterOption === 'replies') {
+            let postTimes = [];
+            let postIdAndName = {}
+            try {
+                let postsMadeByUser = await Post.fetchList({ original_poster_username: this.props.curUserInfo.username, is_comment: true }, { decrypt: true })
+                if (postsMadeByUser.length > 0) {
+                    for (let i = 0; i < postsMadeByUser.length; i++) {
+                        postIdAndName[`${postsMadeByUser[i].attrs.createdAt}`] = [postsMadeByUser[i].attrs.username, postsMadeByUser[i]._id];
+                        postTimes.push(postsMadeByUser[i].attrs.createdAt)
+                    }
+                }
+            } catch (e) {
+                console.log(`Couldn't fetch postids. message: ${e}`)
+            }
+            return this.setState({
+                isLoading: false,
+                commentTimes: postTimes.reverse(),
+                commentIDAndName: postIdAndName,
+                displayComments: false,
+                displayReplies: true,
+            })
+        }
+    }
     displayFriends = () => {
         this.setState({displayFriends: !this.state.displayFriends})
     }
+    
 
     render() {
         const { person, username, friends } = this.props.curUserInfo;
         const backgroundStyle = {
             'backgroundImage': `url("${this.state.settings.backgroundImage ? this.state.settings.backgroundImage : backPic}"`
         }
+        const selectedStyle = {
+            'backgroundColor': '#ffffff'
+        }
+        const notSelectedStyle = {
+            'backgroundColor': '#f9f9f9'
+        }
+        const postStyle = this.state.displayPosts ? selectedStyle : {};
+        const commentStyle = this.state.displayComments ? selectedStyle : {};
+        const replyStyle = this.state.displayReplies ? selectedStyle : {};
         const settingsForm = (<div className="new-status settings">
             <Row>
                 <Col md={12}>
                     <Form>
                         <Form.Group as={Row} controlId="formPlaintextEmail">
                             <Form.Label column sm="12">
-                                To change the display name, image or bio press <a target='_blank' href='https://browser.blockstack.org/profiles' rel="noopener noreferrer" >here</a>.
+                                To change the display name, image or bio press <a target='_blank' href='https://browser.blockstack.org/profiles' rel="noopener noreferrer" >here</a>.<br/>
+                                Please log out, and back in after you make changes.
                             </Form.Label>
                         </Form.Group>
 
@@ -220,6 +291,10 @@ class MyProfile extends Component {
                         <hr />
                         <Button variant="success" onClick={this.saveSettings}>
                             Save
+                        </Button>
+                        {'     '}
+                        <Button variant="danger" onClick={this.toggleSettings}>
+                            Cancel
                         </Button>
                     </Form>
                 </Col>
@@ -362,7 +437,22 @@ class MyProfile extends Component {
                         <Row>
                         <Col xs={1} md={1} xl={2}></Col>
                             <Col sm={12} md={10} xl={8}>
-                                {this.props.curUserOwnPosts.postIDs.length > 0 && this.props.curUserOwnPosts.loaded && !this.state.isLoading && <InfiniteScroll order={this.props.curUserOwnPosts.postIDs} postIdAndName={this.props.curUserOwnPosts.postIDAndName} doneLoading={this.props.curUserOwnPosts.loaded}/>}
+                                <Row className='cur-user-posts-options-bg'>
+                                    <Col className='cur-user-posts-option' style={postStyle} onClick={() => {this.handleFilterPosts('posts')}} >posts</Col>
+                                    <Col className='cur-user-posts-option' style={commentStyle} onClick={() => {this.handleFilterPosts('comments')}} >comments</Col>
+                                    <Col className='cur-user-posts-option' style={replyStyle} onClick={() => {this.handleFilterPosts('replies')}} >replies</Col>
+                                </Row>
+
+                                {
+                                    this.state.displayPosts ?
+                                        <div>{ this.props.curUserOwnPosts.postIDs.length > 0 && this.props.curUserOwnPosts.loaded && !this.state.isLoading && <InfiniteScroll order={this.props.curUserOwnPosts.postIDs} postIdAndName={this.props.curUserOwnPosts.postIDAndName} doneLoading={this.props.curUserOwnPosts.loaded} /> }</div> :
+                                        <InfiniteScroll 
+                                        order={this.state.commentTimes} 
+                                        postIdAndName={this.state.commentIDAndName} 
+                                        doneLoading={!this.state.isLoading} 
+                                        />
+
+                                }
                         </Col>
                         <Col xs={1} md={1}></Col>
                         </Row>

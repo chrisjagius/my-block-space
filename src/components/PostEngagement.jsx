@@ -9,6 +9,7 @@ import LikeInfo from '../model/like';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 
 class PostEngagement extends Component {
@@ -53,9 +54,11 @@ class PostEngagement extends Component {
             this.loadPostInfo()
         }
     }
+    
 
     loadPostInfo = async() => {
         const postInfo = await Post.findById(this.props.radiksId);
+        console.log(postInfo)
         const likeInfo = await LikeInfo.fetchList({ username: this.props.curUserInfo.username, post_id: this.props.radiksId }, { decrypt: true });
         if (likeInfo < 1) {
             return this.setState({postInfo, loaded: true})
@@ -84,7 +87,7 @@ class PostEngagement extends Component {
                                 <img className='post-icon' src={!this.state.likeInfo.liked ? like : likeFull} alt='like' onClick={this.handleLike} />
                                 {this.state.loaded && <p>{this.state.postInfo.attrs.like_cnt}</p>}
                         </Col>
-                        <Col xs={2}><img className='post-icon' src={Comment} alt='comment' onClick={() => {this.props.openComments()}} />
+                            <Col xs={2}><Link className='comment-link' to={`/post/${this.props.status.username}/${this.state.postInfo._id}`} onClick={() => { this.props.reload() }} ><img className='post-icon' src={Comment} alt='comment' />{this.state.loaded && <p>{this.state.postInfo.attrs.comment_cnt}</p>}</Link>
                         </Col>
                     </Row>
                 </Col>

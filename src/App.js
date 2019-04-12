@@ -19,7 +19,7 @@ import { currentUserInformation } from './actions';
 import { User } from 'radiks'
 import VriendUser from './model/vriendUser'
 import FollowInfo from './model/followInfo';
-
+import SinglePost from './components/SinglePost';
 import './App.scss';
 
 
@@ -104,13 +104,19 @@ class App extends Component {
                 props => <Profile {...props} />
               }
             />
-              {loaded && <Route
-              exact path='/feed'
+            <Route
+              path='/post/:username/:postId'
               render={
-                props => <Feed
-                  searchFor={this.searchFor}
-                  {...props} />
+                props => <SinglePost {...props} />
               }
+            />
+            {loaded && <Route
+            exact path='/feed'
+            render={
+              props => <Feed
+                searchFor={this.searchFor}
+                {...props} />
+            }
             />}
             <Route
               path='/:username'

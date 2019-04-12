@@ -8,72 +8,42 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import Post from '../model/post';
+import CommentForm from './CommentForm';
 
 class Comments extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            allPosts: {},
             isLoading: false,
-            order: [],
-            noPosts: false,
-            counter: 0,
-            doneLoading: false,
-            followInfo: []
+            postIds: [],
+            postIdAndName: {}
         }
     }
 
-    fetchRadiksPostsFromFriends = async () => {
-        let postTimes = this.state.order;
-        let postIDAndName = this.state.allPosts;
-        let counter = this.state.counter;
-        let friends = this.state.followInfo
-        if (counter < friends.length) {
-            let postsMadeByUser = await Post.fetchList({ username: friends[counter], }, { decrypt: true })
-            if (postsMadeByUser.length > 0) {
-                const time = Date.now() - (1000 * 60 * 60 * 24 * 7);
-                for (let i = 0; i < postsMadeByUser.length; i++) {
-                    //the if statement makes sure to only fetch post that are not older than one week
-                    if (postsMadeByUser[i].attrs.createdAt > time) {
-                        postIDAndName[`${postsMadeByUser[i].attrs.createdAt}`] = [friends[counter], postsMadeByUser[i]._id];
-                        postTimes.push(postsMadeByUser[i].attrs.createdAt)
-                    } else {
-                        this.setState({
-                            counter: this.state.counter + 1,
-                            order: postTimes,
-                            allPosts: postIDAndName
-                        })
-                        this.fetchRadiksPostsFromFriends()
-                    }
+    fetchCommentsForCurPost = async () => {
+        this.setState({ isLoading: true, postIds: [] })
+        let postTimes = [];
+        let postIdAndName = {}
+        try {
+            const comments = await Post.fetchList({ is_comment: true, original_post_id: this.props.radiksId }, { decrypt: true });
+            if (comments.length > 0) {
+                for (let i = 0; i < comments.length; i++) {
+                    postIdAndName[`${comments[i].attrs.createdAt}`] = [comments[i].attrs.username, comments[i]._id];
+                    postTimes.push(comments[i].attrs.createdAt)
                 }
-                this.setState({
-                    counter: this.state.counter + 1
-                })
-                this.fetchRadiksPostsFromFriends()
-            } else {
-                this.setState({
-                    counter: this.state.counter + 1
-                })
-                this.fetchRadiksPostsFromFriends()
             }
-
-        } else {
-            this.props.addToCurrentUserFeed(mergeSort(this.state.order), this.state.allPosts);
-            this.setState({ order: mergeSort(this.state.order), isLoading: false, noPosts: postTimes.length === 0 ? true : false, doneLoading: true });
+        } catch {
+            // console.log('oepsie, could not fetch data')
         }
+        return this.setState({
+            isLoading: false,
+            postIds: mergeSort(postTimes),
+            postIdAndName: postIdAndName
+        });
     }
 
     async componentDidMount() {
-        //1000 * 60 * 5 equals 5 minutes, so if the usercomes back to the feed component after 5 minutes we fetch the latest posts again
-        // const friendsInfo = await FollowInfo.fetchOwnList({});
-        // const friends = _.head(friendsInfo).attrs.following
-        // friends.push(this.props.curUserInfo.username)
-        // this.setState({ followInfo: friends })
-        // if (!this.props.curUserFeed.loaded || this.props.curUserFeed.lastFetch + 1000 * 60 * 5 < Date.now() || this.props.curUserFeed.lastFetch < this.props.curUserOwnPosts.lastFetch) {
-        //     this.setState({ isLoading: true })
-        //     // this.fetchPostsFromFriends()
-        //     this.fetchRadiksPostsFromFriends()
-        // }
+        this.fetchCommentsForCurPost()
     }
 
 
@@ -81,22 +51,11 @@ class Comments extends Component {
 
         return (
             <div className='comments-container'>
-                <hr/>
-                <Row>
-                    <Col md={1} xl={2}></Col>
-                    <Col sm={12} md={10} xl={8}>
-                        {/* {this.state.isLoading && <div><div className='feed-loader'><div className='hollowLoader'>
-                            <div className='largeBox'></div>
-                            <div className='smallBox'></div>
-                        </div></div><ProgressBar className='prog-bar' striped variant="success" now={now} /><p>Loaded {this.state.counter} of {this.props.curUserInfo.friends.length} friends.</p></div>}
-                        {this.state.noPosts && !this.state.isLoading && <h1>Oepsie, you have no posts in your timeline yet</h1>}
-                        {!this.state.noPosts && !this.state.isLoading &&
-                            <InfiniteScroll order={this.props.curUserFeed.postIDs} postIdAndName={this.props.curUserFeed.postIDAndName} doneLoading={this.props.curUserFeed.loaded} />
-                        } */}
-                        <p>just testing</p>
-                    </Col>
-                    <Col md={1} xl={2}></Col>
-                </Row>
+                <CommentForm radiksId={this.props.radiksId} status={this.props.status} reload={this.props.reload} />
+                {this.state.isLoading && <span>Loading...</span>}
+                {!this.state.isLoading && this.state.postIds.length > 0 && <InfiniteScroll feed={false} order={this.state.postIds} postIdAndName={this.state.postIdAndName} doneLoading={true} />
+                }
+                {this.state.postIds.length === 0 && <h1>This Post has no comments yet</h1>}
             </div>
         )
     }

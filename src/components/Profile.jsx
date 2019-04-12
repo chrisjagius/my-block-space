@@ -64,7 +64,7 @@ class Profile extends Component {
         // let resp = await getFile('postids.json', options);
         try {
             // postIds = JSON.parse(resp || '[]')
-            let postsMadeByUser = await Post.fetchList({ username: username, }, { decrypt: true })
+            let postsMadeByUser = await Post.fetchList({ username: username, is_post: true }, { decrypt: true })
             console.log({postsMadeByUser})
             if (postsMadeByUser.length > 0) {
                 for (let i = 0; i < postsMadeByUser.length; i++) {

@@ -13,6 +13,7 @@ class Post extends Model {
         repost_cnt: { type: Number, decrypted: true },
         comment_cnt: { type: Number, decrypted: true },
         original_post_id: { type: String, decrypted: true },
+        original_poster_username: { type: String, decrypted: true },
     }
 
     static defaults = {

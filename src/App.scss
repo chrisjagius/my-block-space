@@ -260,7 +260,7 @@ blue/grey #394954 */
 
 .heading-name {
   min-width: 100%;
-  font-size: 1.5em;
+  font-size: calc(1vw + 1.5vh);
   font-family: 'Heebo', sans-serif;
   height: 5em;
 }
@@ -270,6 +270,7 @@ blue/grey #394954 */
   max-width: 100%;
   margin: 0;
   padding: 0;
+  font-size: calc(0.9vw + 0.9vh);
 }
 
 .bio-left {
@@ -320,24 +321,42 @@ hr {
   color: black;
   width: 100%;
 }
-
+.cur-user-posts-options-bg {
+  background-color: #f9f9f9;
+  margin: 0;
+  border-top: 1px solid rgb(206, 206, 206);
+}
+.cur-user-posts-option {
+  text-transform: uppercase;
+}
+.cur-user-posts-option:hover {
+  background-color: #ffffff;
+  cursor: pointer;
+}
 .new-status {
   background-color: #f9f9f9;
   margin-bottom: 1em;
   border-radius: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
 }
+.new-comment-status {
+  background-color: #f9f9f9;
+  margin-bottom: 1em;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
+}
 .my-post {
   height: auto;
   background-color: #f9f9f9;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.308), 0 6px 20px 0 rgba(0, 0, 0, 0.308);
+  margin-top: -0.5em;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.308);
   position: relative;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.527)
+  border-bottom: 1px solid rgba(0, 0, 0, 0.164)
 }
 .my-post > hr {
   margin: 0;
   padding: 0;
   width: 100%;
+  // color: 
 }
 .my-post > pre {
   text-align: left;
@@ -415,6 +434,14 @@ hr {
   background: #ffffff;
   resize: none;
   border: 0 none;
+}
+.input-status-comment {
+  height: 15em;
+  overflow: scroll;
+  background: #ffffff;
+  resize: none;
+  border: 0 none;
+  border-radius: 0;
 }
 .input-btn-wrapper {
   margin-top: 0.5em;
@@ -523,6 +550,11 @@ hr {
 .post-link {
   text-decoration: none!important;
   color: #000!important;
+}
+.comment-link {
+  text-decoration: none!important;
+  color: #000!important;
+  display: contents;
 }
 
 div.col-2{

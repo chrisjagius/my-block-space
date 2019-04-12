@@ -31,11 +31,11 @@ class Feed extends Component {
         let counter = this.state.counter;
         let friends = this.state.followInfo
         if (counter < friends.length) {
-            let postsMadeByUser = await Post.fetchList({ username: friends[counter], }, { decrypt: true })
+            let postsMadeByUser = await Post.fetchList({ username: friends[counter], is_post: true }, { decrypt: true })
             if (postsMadeByUser.length > 0) {
-                const time = Date.now() - (1000 * 60 * 60 * 24 * 7);
+                const time = Date.now() - (1000 * 60 * 60 * 24 * 365);
                 for (let i = 0; i < postsMadeByUser.length; i++) {
-                    //the if statement makes sure to only fetch post that are not older than one week
+                    //the if statement makes sure to only fetch post that are not older than one Year
                     if (postsMadeByUser[i].attrs.createdAt > time) {
                         postIDAndName[`${postsMadeByUser[i].attrs.createdAt}`] = [friends[counter], postsMadeByUser[i]._id];
                         postTimes.push(postsMadeByUser[i].attrs.createdAt)
@@ -60,7 +60,8 @@ class Feed extends Component {
             }
 
         } else {
-            this.props.addToCurrentUserFeed(mergeSort(this.state.order), this.state.allPosts);
+            // console.log({allposts: this.state.allPosts, order: this.state.order})
+            // this.props.addToCurrentUserFeed(mergeSort(this.state.order), this.state.allPosts);
             this.setState({ order: mergeSort(this.state.order), isLoading: false, noPosts: postTimes.length === 0 ? true : false, doneLoading: true });
         }
     }
@@ -93,7 +94,7 @@ class Feed extends Component {
                         </div></div><ProgressBar className='prog-bar' striped variant="success" now={now} /><p>Loaded {this.state.counter} of {this.props.curUserInfo.friends.length} friends.</p></div>}
                         {this.state.noPosts && !this.state.isLoading && <h1>Oepsie, you have no posts in your timeline yet</h1>}
                         {!this.state.noPosts && !this.state.isLoading && 
-                            <InfiniteScroll order={this.props.curUserFeed.postIDs} postIdAndName={this.props.curUserFeed.postIDAndName} doneLoading={this.props.curUserFeed.loaded} />
+                            <InfiniteScroll order={this.state.order} postIdAndName={this.state.allPosts} doneLoading={!this.state.isLoading} />
                         }
                     </Col>
                     <Col md={1} xl={2}></Col>
