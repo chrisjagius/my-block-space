@@ -8,7 +8,7 @@
     "test": "react-app-rewired test --env=jsdom"
   },
   "devDependencies": {
-    "express": "^4.15.2",
+    "express": "^4.17.3",
     "opn": "^4.0.2",
     "react-app-rewire-blockstack": "^1.0.7",
     "react-scripts": "2.1.1",
